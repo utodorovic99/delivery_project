@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'delivery_project';
+  title = 'Delivery Manager';
+  public diplayLoginHTMLContext=0;
 }
