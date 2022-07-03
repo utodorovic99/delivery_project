@@ -4,7 +4,8 @@ import {HttpClient, HttpEventType } from '@angular/common/http';
 import { EventType } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
 import * as shajs from 'sha.js';
-import { User } from '../../models/user';
+import { UserRegisterRequest } from '../../models/userRegisterRequest';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-loggin',
@@ -70,20 +71,22 @@ export class LogginComponent implements OnInit {
 
     if(errStr=="")  //Try register on backend and return error
     {
-      let user = new User()
-      user.email      =this.email;
-      user.password   =shajs('sha256').update(this.password).digest('hex');
-      user.re_password =this.re_password;
-      user.username    =this.username;
-      user.name        =this.email;
-      user.surname     =this.surname;
-      user.birthdate   =this.birthdate;
-      user.address     =this.address;
-      user.type        =this.type;
-      user.Img        =this.selected_img;
+      let regReq = new UserRegisterRequest()
+      regReq.email      =this.email;
+      regReq.password   = this.password;
+      regReq.re_password =this.re_password;
+      regReq.username    =this.username;
+      regReq.name        =this.name;
+      regReq.surname     =this.surname;
+      regReq.birthdate   =this.birthdate;
+      regReq.address     =this.address;
+      regReq.type        =this.type;
+      regReq.Img        =this.selected_img;
 
-      console.log('Register user result: '); 
-      console.log(this.registrationService.registerUser(user, this.http));
+      let res=-1;
+      this.registrationService.registerUser(regReq, this.http);
+
+      if(res==0) this.diplayHTMLContext=0;
     }
     else
     {

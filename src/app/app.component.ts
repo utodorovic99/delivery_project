@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Delivery Manager';
-  public diplayLoginHTMLContext=1;
+  public diplayLoginHTMLContext=0;
 }

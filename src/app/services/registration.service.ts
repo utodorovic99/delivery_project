@@ -1,23 +1,26 @@
 import { Injectable } from '@angular/core';
-import { User } from '../models/user';
+import { UserRegisterRequest } from '../models/userRegisterRequest';
 import {HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { ReturnStatement } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegistrationService {
-  url="User";
-  //_headers =new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8').set('accept', 'text/plain');
+  controllerUrl="User";
+  headers= new HttpHeaders()
+  .set('content-type', 'application/json');
   constructor() { }
 
-  public registerUser(usr:User, http:HttpClient):any
+  public async registerUser(regReq:UserRegisterRequest, http:HttpClient):Promise<any>
   {
-    console.log("Sending register user request");
-    http.post<string>(`${environment.apiUrl}/${this.url}/register`, usr).subscribe(data=>
-    {
-      if(data == "") console.log("Register succeeded");
-      else           console.log("Register failed with: "+data);
-    });
+    let serviceUrl="register";
+    let body = JSON.stringify(regReq)
+    const t = await http.post<string>(  `${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, 
+                        body, 
+                        {'headers':this.headers}).toPromise();
+    
+    return t;
   }
 }

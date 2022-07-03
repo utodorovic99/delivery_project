@@ -8,11 +8,11 @@ namespace DeliveryService.Model
   public class User
   {
 
-    private static readonly string _DEFAULT_IMG_NAME= @"select_image.png";
+    public static readonly string DEFAULT_IMG_NAME= @"select_image.png";
     private string _birthDate = "";
     private string _imgName = "";
 
-    public User(string email, string password, string username, string name, string surname, string birthdate, string address, string type, string imageName)
+    public User(string email, string password, string username, string name, string surname, string birthdate, string address, char type, string imageName)
     {
       Email = email;
       Password = password;
@@ -35,12 +35,11 @@ namespace DeliveryService.Model
       Surname = "";
       Birthdate = "";
       Address = "";
-      Type = "";
+      Type = 'n';
       ImageName = "";
       State = (int)EUserState.Unconfirmed;
     }
 
-    [Key]
     public string Email       { get; set; } = String.Empty;
     public string Password    { get; set; } = String.Empty;
 
@@ -53,46 +52,18 @@ namespace DeliveryService.Model
       set
       {
         if (value.Contains("/")) _birthDate = value.Replace('/', '-');
-      }
+      } 
     }
     public string Address     { get; set; } = String.Empty;
-    public string Type        { get; set; } = String.Empty;
+    public char Type        { get; set; }                     //Deliveryman(d), Administrator(a), Consumer(c)
     public string ImageName
     {
       get { return _imgName; }
       set
       {
-        if (value.Equals(String.Empty)) _imgName = _DEFAULT_IMG_NAME;
+        if (value.Equals(String.Empty)) _imgName = DEFAULT_IMG_NAME;
       }
     }
-    public int State { get; set; }
-    public bool ValidateSelf(out string errStr)
-    {
-      errStr = "";
-      DateTime dummyResult = new DateTime();
-      if (this.Email == "" || this.Password == "" || this.Surname == "" || this.Address == "" || this.Type == "" || this.Username == "" || this.Name == "" || this.Birthdate == "")
-        errStr += "Empty fields detected.\n";
-      else
-      {
-        if (!DateTime.TryParseExact(this.Birthdate, "YYYY-MM-DD", CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out dummyResult))
-          errStr += "Bad date format (must be YYYY-MM-DD).\n";
-
-        if (this.Password.Length < 8) errStr += "Password must not be shorter than 8 characters\n";
-
-        if (this.Username.Length < 8) errStr += "Username must not be shorter than 8 characters\n";
-
-        if (this.Address.Length < 8) errStr += "Address must not be shorter than 8 characters\n";
-
-        if(!(new Regex(@"/^[a-zA-Z0-9.! #$%&'*+/=? ^_`{|}~-]+@[a-zA-Z0-9-]+(?:\. [a-zA-Z0-9-]+)*$/")).IsMatch(this.Email))
-          errStr += "Invalid Email format (examle: somename@somedomain.com)\n";
-
-        if ((EUserState)this.State != EUserState.Confirmed) errStr += "Invalid initial state (must be unconfirmed)\n";
-      }
-
-
-      errStr.TrimEnd('\n');
-      return errStr!="";
-    }
-
+    public int State { get; set; }                            //Not Verified, Pending, Verified
   }
 }

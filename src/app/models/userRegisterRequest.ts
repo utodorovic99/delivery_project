@@ -1,4 +1,4 @@
-export class User
+export class UserRegisterRequest
 {
     email      ="";
     password   ="";
@@ -9,12 +9,12 @@ export class User
     birthdate  ="";
     address    ="";
     type       ="";
-    img;
+    imageRaw;
 
     public get Img(): File {
-        return this.img;
+        return this.imageRaw;
       }
       public set Img(value: File) {
-        this.img = value;
+        this.imageRaw = value;
       }
 }
