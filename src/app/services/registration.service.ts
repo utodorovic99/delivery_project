@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { UserRegisterRequest } from '../models/userRegisterRequest';
 import {HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { ReturnStatement } from '@angular/compiler';
+import { AppComponent } from '../app.component';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,13 @@ export class RegistrationService {
   .set('content-type', 'application/json');
   constructor() { }
 
-  public async registerUser(regReq:UserRegisterRequest, http:HttpClient):Promise<any>
+  public  registerUser(regReq:UserRegisterRequest, http:HttpClient):Observable<number | string>
   {
     let serviceUrl="register";
     let body = JSON.stringify(regReq)
-    const t = await http.post<string>(  `${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, 
+
+    return http.post<string>(  `${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, 
                         body, 
-                        {'headers':this.headers}).toPromise();
-    
-    return t;
+                        {'headers':this.headers});   
   }
 }

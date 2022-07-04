@@ -32,7 +32,7 @@ namespace DeliveryService.Controllers
     //User register
     [HttpPost]
     [Route("api/[controller]/register")]
-    public async Task<ActionResult<string>> Register([FromBody]UserRegisterRequestDTO regReq)
+    public ActionResult<string> Register([FromBody]UserRegisterRequestDTO regReq)
     {
       string errStr = "";
       if (!_transistentUserService.TryRegister(regReq, out errStr))
@@ -44,7 +44,7 @@ namespace DeliveryService.Controllers
     //User login
     [HttpPost]
     [Route("api/[controller]/{username}/login")]
-    public async Task<ActionResult<string>> Login(UserLoginRequestDTO loginReq)
+    public  ActionResult<string> Login(UserLoginRequestDTO loginReq)
     {
       string errMsg = "";
       string token = "";
@@ -56,7 +56,7 @@ namespace DeliveryService.Controllers
     //User profile update
     [HttpPost]
     [Route("api/[controller]/{username}/update")]
-    public async Task<ActionResult<string>> Update(UserUpdateRequestDTO loginReq, [System.Web.Http.FromUri] string username)
+    public  ActionResult<string> Update(UserUpdateRequestDTO loginReq, [System.Web.Http.FromUri] string username)
     {
       string errStr = "";
       if (!_transistentUserService.TryUpdate(loginReq, username, out errStr))
@@ -69,7 +69,7 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]")]
     [Authorize(Roles = "Administrator")]
-    public async Task<List<UserDTO>> GetAllUsers()
+    public  List<UserDTO> GetAllUsers()
     {
       return _transistentUserService.GetAll();
     }
@@ -77,7 +77,7 @@ namespace DeliveryService.Controllers
     //Get personal profile data
     [HttpGet]
     [Route("api/[controller]/{username}/profile")]
-    public async Task<UserDTO> Profile([System.Web.Http.FromUri] string username)
+    public UserDTO Profile([System.Web.Http.FromUri] string username)
     {
       return _transistentUserService.GetByUsername(username);
     }
@@ -86,7 +86,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/{username}/accept")]
     [Authorize(Roles = "Administrator")]
-    public async Task<string> Accept([System.Web.Http.FromUri] string username)
+    public string Accept([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Confirmed, out errStr);
@@ -97,7 +97,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/{username}/decline")]
     [Authorize(Roles = "Administrator")]
-    public async Task<string> Decline([System.Web.Http.FromUri] string username)
+    public string Decline([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Rejected, out errStr);
@@ -108,7 +108,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/{username}/pending")]
     [Authorize(Roles = "Administrator")]
-    public async Task<string> Pending([System.Web.Http.FromUri] string username)
+    public string Pending([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Pending, out errStr);

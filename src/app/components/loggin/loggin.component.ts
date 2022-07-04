@@ -81,12 +81,36 @@ export class LogginComponent implements OnInit {
       regReq.birthdate   =this.birthdate;
       regReq.address     =this.address;
       regReq.type        =this.type;
-      regReq.Img        =this.selected_img;
+      regReq.Img         =this.selected_img;
 
-      let res=-1;
-      this.registrationService.registerUser(regReq, this.http);
+/*(success)=>
+    {
+      console.log("Registration succeeded");
+    }),
+    (error)=>
+    {
+      console.log("Registration failed with error:"+error.status);
+    }; */
 
-      if(res==0) this.diplayHTMLContext=0;
+      this.registrationService.registerUser(regReq, this.http).subscribe(
+        {
+          next: (data)=>
+          {
+            if(data ==null)
+            {          
+              this.setLoginContext();
+            }
+          },
+
+          error: (error)=>
+          {
+            if(error.status === 400)
+              this.errTxt="Errors:"+error.error;
+            else if (error.status === 503)
+              this.errTxt="Errors: Service is offline";
+          }        
+        });
+
     }
     else
     {
