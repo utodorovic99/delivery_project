@@ -1,20 +1,37 @@
 export class UserRegisterRequest
 {
-    email      ="";
-    password   ="";
-    re_password="";
-    username   ="";
-    name       ="";
-    surname    ="";
-    birthdate  ="";
-    address    ="";
-    type       ="";
-    imageRaw;
+    Email      :string ;
+    Password   :string ;
+    Re_password:string ;
+    Username   :string ;
+    Name       :string ;
+    Surname    :string ;
+    Birthdate  :string ;
+    Address    :string ;
+    Type       :string ;
+    ImageRaw;
+
+    
+
+    constructor(Email:string, Password:string, Re_password:string, Username:string, Name:string, 
+                Surname:string, Birthdate:string, Address:string, Type:string, ImageRaw)
+    {
+      this.Email        =Email;    
+      this.Password     =Password; 
+      this.Re_password  =Re_password;
+      this.Username     =Username; 
+      this.Name         =Name;     
+      this.Surname      =Surname; 
+      this.Birthdate    =Birthdate;
+      this.Address      =Address; 
+      this.Type         =Type;   
+      this.ImageRaw     =ImageRaw;
+    };
 
     public get Img(): File {
-        return this.imageRaw;
+        return this.ImageRaw;
       }
       public set Img(value: File) {
-        this.imageRaw = value;
+        this.ImageRaw = value;
       }
 }

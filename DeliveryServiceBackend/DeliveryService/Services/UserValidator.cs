@@ -107,6 +107,14 @@ namespace DeliveryService.Services
       return username.Length >= 8 ? "" : "Username must not be shorter than 8 characters\n";
     }
 
+    public static string ValidateEmail(string email)
+    {
+      var errMsg = "";
+      if (!((new Regex(@"^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$")).IsMatch(email)))
+        errMsg += "Invalid Email format (examle: somename@somedomain.com)\n";
+      return errMsg;
+    }
+
     public static string ValidateLoginParams(UserLoginRequestDTO loginReq, out Dictionary<string, bool> stats)
     {
       string errMsg = "";
@@ -115,8 +123,8 @@ namespace DeliveryService.Services
       stats.Add("Username", true);
       stats.Add("Password", true);
 
-      tmpStr = ValidateUsername(loginReq.Username);
-      if (tmpStr != "") { stats["Username"] = false; }
+      tmpStr = ValidateEmail(loginReq.Email);
+      if (tmpStr != "") { stats["Email"] = false; }
       errMsg += (tmpStr.TrimEnd('\n')+";");
 
       tmpStr = ValidatePassword(loginReq.Password);

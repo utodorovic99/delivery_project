@@ -26,7 +26,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/{username}")]
     [Authorize(Roles = "Consumer")]
-    public async Task<string> Order([System.Web.Http.FromUri] string username, OrderDTO orderDTO)
+    public async Task<string> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
     {
       throw new NotImplementedException();
     }
@@ -80,7 +80,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/accept/orderId")]
     [Authorize(Roles = "Deliveryman")]
-    public async Task<string> AcceptOrder([System.Web.Http.FromUri] int orderId, string username)
+    public async Task<string> AcceptOrder([System.Web.Http.FromUri] int orderId, [FromBody] string username)
     {
       throw new NotImplementedException();
     }
@@ -89,7 +89,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/products/create")]
     [Authorize(Roles = "Administrator")]
-    public async Task<string> CreateProduct(ProductDTO product)
+    public async Task<string> CreateProduct([FromBody] ProductDTO product)
     {
       throw new NotImplementedException();
     }

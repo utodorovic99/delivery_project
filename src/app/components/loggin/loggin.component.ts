@@ -6,6 +6,7 @@ import { RegistrationService } from '../../services/registration.service';
 import * as shajs from 'sha.js';
 import { UserRegisterRequest } from '../../models/userRegisterRequest';
 import { MatDialog } from '@angular/material/dialog';
+import { UserLoginRequest } from '../../models/userLoginRequest';
 
 @Component({
   selector: 'app-loggin',
@@ -15,6 +16,8 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class LogginComponent implements OnInit {
   @Input() public diplayHTMLContext;                            //Invoked by Root Component
+  @Input() public SPVisualState;
+  @Output() public SPVisualState_changedEvent = new EventEmitter();
 
   public email       ="";
   public password    ="";
@@ -39,19 +42,68 @@ export class LogginComponent implements OnInit {
   constructor(private http: HttpClient, private registrationService: RegistrationService) { }
   ngOnInit(): void 
   {
-    
+    this.setLoginEnvironment();
+    this.setLoginContext();
   }
 
   SubmitLogin(Login:any)
   {
+    let errStr="";
+    this.errTxt="";
+    if(this.email ==""     || this.password   =="")
+      errStr+="\n\tEmpty fields detected.\n";
+    else
+    {
+      if(this.password.length <8) errStr+="\n\tPassword must not be shorter than 8 characters";
+      if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email))) errStr+="\n\tIvalid email format";           
+    }
    
+    if(errStr=="")
+    {       
+      let logReq = new UserLoginRequest(this.email, this.password);    
+
+      this.registrationService.loginUser(logReq, this.http).subscribe(
+        {
+          
+          next: (data)=>
+          {
+            if(data['value'] == null || data['value'] =="")
+            {          
+              this.errTxt="Errors: Login failed";
+            }
+            else
+            {
+
+              localStorage.setItem('token', JSON.parse(JSON.stringify(data)).value);
+              switch(this.registrationService.getUserRole(localStorage.getItem('token')))
+              {
+                case "Administrator": { console.log('HERE');this.setAdminEnvironment();      break;}
+                case "Consumer":      { console.log('HERE');this.setConsumerEnvironment();   break;}
+                case "Deliveryman":   { console.log('HERE');this.setDeliverymanEnvironment();break;}
+              }
+            }
+          },
+
+          error: (error)=>
+          {
+            console.log('Error happened');
+            console.log(error);
+            //if(error.status === 400)
+            //  this.errTxt="Errors:"+error.error;
+           // else if (error.status === 503)
+              //this.errTxt="Errors: Service is offline";
+          }
+        });  
+    }
+    else
+      this.errTxt="Errors:"+errStr;
   }
 
   SubmitRegister(Register:any)
   {
 
     let errStr="";
-
+    this.errTxt="";
     if(this.email ==""     || this.password   =="" || this.re_password=="" || this.surname    ==""||
        this.address    =="" || this.type       =="" || this.username   ==""|| this.name =="")
        errStr+="\n\tEmpty fields detected.\n";
@@ -71,26 +123,8 @@ export class LogginComponent implements OnInit {
 
     if(errStr=="")  //Try register on backend and return error
     {
-      let regReq = new UserRegisterRequest()
-      regReq.email      =this.email;
-      regReq.password   = this.password;
-      regReq.re_password =this.re_password;
-      regReq.username    =this.username;
-      regReq.name        =this.name;
-      regReq.surname     =this.surname;
-      regReq.birthdate   =this.birthdate;
-      regReq.address     =this.address;
-      regReq.type        =this.type;
-      regReq.Img         =this.selected_img;
-
-/*(success)=>
-    {
-      console.log("Registration succeeded");
-    }),
-    (error)=>
-    {
-      console.log("Registration failed with error:"+error.status);
-    }; */
+      let regReq = new UserRegisterRequest(this.email, this.password, this.re_password, this.username, this.name, 
+                                           this.surname, this.birthdate, this.address, this.type,this.selected_img);
 
       this.registrationService.registerUser(regReq, this.http).subscribe(
         {
@@ -128,6 +162,32 @@ export class LogginComponent implements OnInit {
       reader.readAsDataURL(this.selected_img);
   }
 
+
+  //#region UISetters 
+  setLoginEnvironment()
+  {
+    this.SPVisualState = 0;
+    this.SPVisualState_changedEvent.emit(0);
+  }
+
+  setAdminEnvironment()
+  {
+    this.SPVisualState = 1;
+    this.SPVisualState_changedEvent.emit(1);
+  }
+
+  setDeliverymanEnvironment()
+  {
+    this.SPVisualState = 2;
+    this.SPVisualState_changedEvent.emit(2);
+  }
+
+  setConsumerEnvironment()
+  {
+    this.SPVisualState = 3;
+    this.SPVisualState_changedEvent.emit(3);
+  }
+
   setSigninContext():void
   {
     this.diplayHTMLContext=1;
@@ -139,4 +199,5 @@ export class LogginComponent implements OnInit {
     this.diplayHTMLContext=0;
     this.errTxt="";
   }
+  //#endregion UISetters 
 }

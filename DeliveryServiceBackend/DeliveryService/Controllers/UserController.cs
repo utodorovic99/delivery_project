@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -38,25 +39,25 @@ namespace DeliveryService.Controllers
       if (!_transistentUserService.TryRegister(regReq, out errStr))
         return BadRequest(errStr);
  
-        return Ok("");           
+        return "";           
     }
 
     //User login
     [HttpPost]
-    [Route("api/[controller]/{username}/login")]
-    public  ActionResult<string> Login(UserLoginRequestDTO loginReq)
+    [Route("api/[controller]/login")]
+    public ActionResult<PrimitiveResponseDTO> Login([FromBody]UserLoginRequestDTO loginReq)
     {
       string errMsg = "";
       string token = "";
       if (!_transistentUserService.TryLogin(loginReq, out errMsg, out token)) return BadRequest(errMsg);
 
-      return Ok(token);
+      return Ok(new PrimitiveResponseDTO(token, "String"));
     }
 
     //User profile update
     [HttpPost]
     [Route("api/[controller]/{username}/update")]
-    public  ActionResult<string> Update(UserUpdateRequestDTO loginReq, [System.Web.Http.FromUri] string username)
+    public  ActionResult<string> Update([FromBody]UserUpdateRequestDTO loginReq, [System.Web.Http.FromUri] string username)
     {
       string errStr = "";
       if (!_transistentUserService.TryUpdate(loginReq, username, out errStr))

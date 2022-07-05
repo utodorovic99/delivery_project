@@ -69,8 +69,8 @@ namespace DeliveryService.Services.Impl
       errMsg=UserValidator.ValidateLoginParams(loginReq, out stats);
       if (errMsg == "") return false;
 
-      User usr = _dbContext.Users.FirstOrDefault(x => x.Username.Equals(loginReq.Username));
-      if (usr is null) { stats["Username"] = false; errMsg = "Invalid username;"; return false; }
+      User usr = _dbContext.Users.FirstOrDefault(x => x.Email.Equals(loginReq.Email));
+      if (usr is null) { stats["Email"] = false; errMsg = "Invalid email;"; return false; }
 
       if (!usr.Password.Equals(ExecuteEncyprion(loginReq.Password)))
       { stats["Password"] = false; errMsg = "Incorrect password;"; return false; }

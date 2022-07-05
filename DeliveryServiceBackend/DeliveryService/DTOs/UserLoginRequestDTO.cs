@@ -2,19 +2,19 @@ namespace DeliveryService.DTOs
 {
   public class UserLoginRequestDTO
   {
-    public UserLoginRequestDTO(string username, string password)
+    public UserLoginRequestDTO(string email, string password)
     {
-      Username = username;
+      Email = Email;
       Password = password;
     }
 
     public UserLoginRequestDTO()
     {
-      Username = "";
+      Email = "";
       Password = "";
     }
 
-    public string Username { get; set; }
+    public string Email { get; set; }
     public string Password { get; set; }
   }
 }
