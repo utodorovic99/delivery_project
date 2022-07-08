@@ -1,6 +1,6 @@
-<section [ngSwitch]="diplayHTMLContext">
+<section [ngSwitch]="SPVisualContext">
 
-  <form #login="ngForm" *ngSwitchCase="0" (ngSubmit)="SubmitLogin(login)" class="form-group">
+  <form #login="ngForm" *ngSwitchCase="'Login'" (ngSubmit)="SubmitLogin(login)" class="form-group">
     <div  class="container py-5 h-200">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -47,7 +47,7 @@
     </div>
   </form>
 
-  <form #register="ngForm" *ngSwitchCase="1" (ngSubmit)="SubmitRegister(register)">
+  <form #register="ngForm" *ngSwitchCase="'Register'" (ngSubmit)="SubmitRegister(register)">
     <div  class="container py-5 h-200">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-12 col-md-8 col-lg-6 col-xl-5">

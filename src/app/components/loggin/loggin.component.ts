@@ -15,9 +15,9 @@ import { UserLoginRequest } from '../../models/userLoginRequest';
   providers: [RegistrationService]
 })
 export class LogginComponent implements OnInit {
-  @Input() public diplayHTMLContext;                            //Invoked by Root Component
-  @Input() public SPVisualState;
-  @Output() public SPVisualState_changedEvent = new EventEmitter();
+
+  @Input() public SPVisualContext;
+  @Output() public SPVisualContext_changedEvent = new EventEmitter();
 
   public email       ="";
   public password    ="";
@@ -67,6 +67,7 @@ export class LogginComponent implements OnInit {
           
           next: (data)=>
           {
+            this.errTxt="";
             if(data['value'] == null || data['value'] =="")
             {          
               this.errTxt="Errors: Login failed";
@@ -75,23 +76,24 @@ export class LogginComponent implements OnInit {
             {
 
               localStorage.setItem('token', JSON.parse(JSON.stringify(data)).value);
-              switch(this.registrationService.getUserRole(localStorage.getItem('token')))
+              localStorage.setItem('token_converted',  this.registrationService.getTokenJSON(localStorage.getItem('token')));
+              let coverted = localStorage.getItem('token_converted');
+              if (coverted==null) coverted ="";
+              switch(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
               {
-                case "Administrator": { console.log('HERE');this.setAdminEnvironment();      break;}
-                case "Consumer":      { console.log('HERE');this.setConsumerEnvironment();   break;}
-                case "Deliveryman":   { console.log('HERE');this.setDeliverymanEnvironment();break;}
+                case "Administrator": { this.setAdminEnvironment();      break;}
+                case "Consumer":      { this.setConsumerEnvironment();   break;}
+                case "Deliveryman":   { this.setDeliverymanEnvironment();break;}
               }
             }
           },
 
           error: (error)=>
           {
-            console.log('Error happened');
-            console.log(error);
-            //if(error.status === 400)
-            //  this.errTxt="Errors:"+error.error;
-           // else if (error.status === 503)
-              //this.errTxt="Errors: Service is offline";
+            if(error.status === 400)
+              this.errTxt="Errors:"+error.error;
+            else if (error.status === 503)
+              this.errTxt="Errors: Service is offline";
           }
         });  
     }
@@ -166,37 +168,59 @@ export class LogginComponent implements OnInit {
   //#region UISetters 
   setLoginEnvironment()
   {
-    this.SPVisualState = 0;
-    this.SPVisualState_changedEvent.emit(0);
+    this.SPVisualContext = 'Login';
+    this.SPVisualContext_changedEvent.emit('Login');
   }
 
   setAdminEnvironment()
   {
-    this.SPVisualState = 1;
-    this.SPVisualState_changedEvent.emit(1);
+    this.SPVisualContext = 'Administrator';
+    this.SPVisualContext_changedEvent.emit('Administrator');
   }
 
   setDeliverymanEnvironment()
   {
-    this.SPVisualState = 2;
-    this.SPVisualState_changedEvent.emit(2);
+    this.SPVisualContext = 'Deliveryman';
+    this.SPVisualContext_changedEvent.emit('Deliveryman');
   }
 
   setConsumerEnvironment()
   {
-    this.SPVisualState = 3;
-    this.SPVisualState_changedEvent.emit(3);
+    this.SPVisualContext = 'Consumer';
+    this.SPVisualContext_changedEvent.emit('Consumer');
   }
 
   setSigninContext():void
   {
-    this.diplayHTMLContext=1;
+    this.email       =""; 
+    this.password    ="";
+    this.re_password ="";
+    this.username    ="";
+    this.name        ="";
+    this.surname     ="";
+    this.birthdate   ="";
+    this.address     ="";
+    this.type        ="";
+    this.img_url='assets\\Images\\select_image.png';
+
+    this.SPVisualContext='Register';
     this.errTxt="";
   }
 
   setLoginContext():void
   {
-    this.diplayHTMLContext=0;
+    //this.email       =""; //Keep entered value for login, restart others
+    this.password    ="";
+    this.re_password ="";
+    this.username    ="";
+    this.name        ="";
+    this.surname     ="";
+    this.birthdate   ="";
+    this.address     ="";
+    this.type        ="";
+    this.img_url='assets\\Images\\select_image.png';
+
+    this.SPVisualContext='Login';
     this.errTxt="";
   }
   //#endregion UISetters 

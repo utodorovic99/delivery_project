@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-menu',
@@ -6,17 +6,34 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
+  @Output() public SPVisualContext_changedEvent = new EventEmitter();
   @Output() public SPVisualState_changedEvent = new EventEmitter();
-  
+  @Input() public roleContext;
   constructor() { }
-
+  
   ngOnInit(): void {
+    this.SPVisualState_changedEvent.emit('Home');
   }
 
   logout()
   {
-    localStorage.removeItem('token');
-    this.SPVisualState_changedEvent.emit(0);
+    localStorage.clear();
+    this.SPVisualContext_changedEvent.emit('Login');
+  }
+
+  renderProfileView()
+  {
+    this.SPVisualState_changedEvent.emit("Profile");
+  }
+
+  renderUsersView()
+  {
+    this.SPVisualState_changedEvent.emit("Users");
+  }
+
+  renderOrdersView()
+  {
+    this.SPVisualState_changedEvent.emit("Orders");
   }
 
 }

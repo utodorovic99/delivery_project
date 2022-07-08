@@ -93,22 +93,20 @@ namespace DeliveryService.Services.Impl
       return orders;
     }
 
-    public bool ConfirmDelivery(int orderId, string deliverymanUsername, out string errMsg)
+    public bool ConfirmDelivery(int orderId, out string errMsg)
     {
       errMsg = "";
-      var deliveryman = _dbContext.Users.Find(deliverymanUsername);
+
+      var order = _dbContext.Orders.Find(orderId);                        //Find order
+      if (order == null)
+      { errMsg = "Invalid order number."; return false; }
+
+      var deliveryman = _dbContext.Users.Find(order.Deliveryman);         //Get deliveryman who accepted it
       if (deliveryman == null)
       { errMsg = "Invalid useranme."; return false; }
 
       if (!deliveryman.Type.Equals("d"))
       { errMsg = "Invalid user type."; return false; }
-
-      var order = _dbContext.Orders.Find(orderId);
-      if (order == null)
-      { errMsg = "Invalid order number."; return false; }
-
-      if(!order.Deliveryman.Equals(deliverymanUsername))
-      { errMsg = "Order taken by another deliveryman"; return false; }
 
       order.Status = 'c';
       _dbContext.SaveChangesAsync();
@@ -161,7 +159,7 @@ namespace DeliveryService.Services.Impl
       return true;
     }
 
-    public List<OrderDTO> GetAll()
+    public List<OrderDTO> GetAllOrders()
     {
       var orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList());
       AttachItemsToOrder(ref orders);
@@ -199,22 +197,39 @@ namespace DeliveryService.Services.Impl
 
     private void AttachItemsToOrder(ref List<OrderDTO> orders)
     {
-      OrderDTO orderIt = null;
       Product product = null;
-      foreach (var orderItem in _dbContext.OrderItems)
+      Dictionary<int, List<OrderItem>> orderItems = new Dictionary<int, List<OrderItem>>(); //To avoid multiple streams opened at the momement issue
+      foreach (var order in orders)
+        orderItems.Add(order.Id, new List<OrderItem>());
+
+      foreach (var orderItem in _dbContext.OrderItems)  //Iterate trough order items
+        orderItems[orderItem.OrderId].Add(orderItem);   //Attach to order
+
+      foreach(var order in orders)
       {
-        if ((orderIt = orders.FirstOrDefault(x => x.Id.Equals(orderItem.OrderId))) != null)
+        foreach(var orderItem in orderItems[order.Id])
         {
           product = _dbContext.Products.Find(orderItem.ProductId);
-          orderIt.Items.Add(new OrderItemDTO
-            (
-              product.Name,
-              orderItem.Quantity,
-              product.Price
-            ));
+          order.Items.Add(new OrderItemDTO(product.Name, orderItem.Quantity, product.Price));
         }
       }
     }
 
+    public List<OrderItemDTO> GetOrderItems(int orderId, out string errMsg)
+    {
+      errMsg = "";
+      if (_dbContext.Orders.Find(orderId) == null)
+      { errMsg = "Invalid order Id"; return new List<OrderItemDTO>(); }
+
+      var outVal = new List<OrderItemDTO>();
+      var items = _dbContext.OrderItems.ToList().Where(x => x.OrderId.Equals(orderId));
+      Product product = null;
+      foreach (var item in items)
+      {
+        product = _dbContext.Products.Find(item.ProductId);
+        outVal.Add(new OrderItemDTO(product.Name, item.Quantity, product.Price));
+      }
+      return outVal;
+    }
   }
 }

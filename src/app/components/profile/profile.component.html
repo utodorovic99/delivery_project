@@ -1,1 +1,126 @@
-<p>profile works!</p>
+<section style="background-color: #eee;">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <img src={{img_url}} alt="profile image"
+              class="rounded-circle img-fluid" style="width: 150px; background-color: #6a11cb;">
+            <h5 class="my-3">{{name}} {{surname}}</h5>
+            <p class="text-muted mb-1">{{type}}</p>
+            <p class="text-muted mb-4">{{address}}</p>
+            <div class="d-flex justify-content-center mb-2">
+              <button type="button" class="btn btn-primary" style="width: 80px;" (click)="editData()">Edit</button>
+              <button type="button" class="btn btn-outline-primary ms-1" [disabled]="dissabledFlag" style="width: 80px;" name="submitBtn" (click)="updateData()">Apply</button>
+              <img src="assets\Images\reload.png" style="height: 20px; width: 20px; vertical-align: bottom; cursor: pointer;" (click)="reloadData()">
+            </div>
+
+            <div class="form-control-md">
+              <p name="errLbl" class="text-muted mb-1" style="color: #CD5C5C">{{errTxt}}</p> 
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Name</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="name" type="text" id="name" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p  class="mb-0">Surname</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="surname" type="text"  id="surname" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Username</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="username" type="text" id="username" class="text-muted mb-0" readonly/>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="email"  type="text" id="email" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Birthdate</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="birthdate" id="birthdate" [readonly]="dissabledFlag" type="date"  class="muted mb-0"/>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="address" type="text" id="address" class="text-muted mb-0" [readonly]="dissabledFlag" />
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Type</p>
+                </div>
+                <div class="col-sm-9">
+                    <select id="type" value ="[(ngModel)]='type'" class="muted mb-0" disabled="true">
+                        <option value="admin">Administrator</option>
+                        <option value="delivery">Deliveryman</option>
+                        <option value="user">Consumer</option>
+                    </select>
+                </div>
+              </div>
+              <hr *ngIf="!dissabledFlag">
+            <div *ngIf="!dissabledFlag" class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Current Password</p>
+                <p style="font-size:smaller">(required)</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="password" type="password" id="password" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+            <hr *ngIf="!dissabledFlag">
+            <div *ngIf="!dissabledFlag" class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">New Password</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="new_password" type="password" id="new_password" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+            <hr *ngIf="!dissabledFlag">
+            <div *ngIf="!dissabledFlag" class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Confirm Password</p>
+              </div>
+              <div class="col-sm-9">
+                <input [(ngModel)]="re_new_password" type="password" id="re_new_password" class="text-muted mb-0" [readonly]="dissabledFlag"/>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</section>

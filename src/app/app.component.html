@@ -1,20 +1,39 @@
 
-<div class="vh-auto gradient-custom" style="width: 100%; height: 200%;" >
-    <div name="SPContainer" [ngSwitch]="SPVisualState">
-        <div *ngSwitchCase='0'> <!--Loading environment-->
-            <app-loggin [diplayHTMLContext]="diplayLoginHTMLContext" (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)'></app-loggin>
+<div class="vh-auto gradient-custom" style="width: 100%; height: 300%;" >
+    <div name="SPContainer" [ngSwitch]="SPVisualContext">
+        <div *ngSwitchCase="'Login'"> <!--Loading environment-->
+            <app-loggin (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)'></app-loggin>
         </div>
 
-        <div *ngSwitchCase="1"> <!--Admin environment-->
-            <app-menu (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)'></app-menu>
+        <div *ngSwitchCase="'Administrator'"> <!--Admin environment-->
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Administrator'"></app-menu>
+            <div class="row" [ngSwitch]="SPVisualState">
+                
+                <div *ngSwitchCase="'Home'">
+                    <h1>Home content</h1>
+                </div>
+
+                <div *ngSwitchCase="'Profile'">
+                    <app-profile (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)'></app-profile>
+                </div>
+
+                <div *ngSwitchCase="'Users'">
+                    <h1>Users content</h1>
+                </div>
+
+                <div *ngSwitchCase="'Orders'">
+                   <app-orders></app-orders>
+                </div>
+
+            </div>
         </div>
 
-        <div *ngSwitchCase="2"> <!--Deliveryman environment-->
-            <app-menu></app-menu>
+        <div *ngSwitchCase="'Deliveryman'"> <!--Deliveryman environment-->
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' [roleContext] = "'Deliveryman'"></app-menu>
         </div>
 
-        <div *ngSwitchCase="3"> <!--Consumer environment-->
-            <app-menu></app-menu>
+        <div *ngSwitchCase="'Consumer'"> <!--Consumer environment-->
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' [roleContext] ="'Consumer'"></app-menu>
         </div>
 
     </div>

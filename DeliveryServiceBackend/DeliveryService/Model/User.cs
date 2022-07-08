@@ -9,7 +9,6 @@ namespace DeliveryService.Model
   {
 
     public static readonly string DEFAULT_IMG_NAME= @"select_image.png";
-    private string _birthDate = "";
     private string _imgName = "";
 
     public User(string email, string password, string username, string name, string surname, string birthdate, string address, char type, string imageName)
@@ -46,14 +45,7 @@ namespace DeliveryService.Model
     public string Username    { get; set; } = String.Empty;
     public string Name        { get; set; } = String.Empty;
     public string Surname     { get; set; } = String.Empty;
-    public string Birthdate
-    {
-      get { return _birthDate; }
-      set
-      {
-        if (value.Contains("/")) _birthDate = value.Replace('/', '-');
-      } 
-    }
+    public string Birthdate   { get; set; } = String.Empty;
     public string Address     { get; set; } = String.Empty;
     public char Type        { get; set; }                     //Deliveryman(d), Administrator(a), Consumer(c)
     public string ImageName

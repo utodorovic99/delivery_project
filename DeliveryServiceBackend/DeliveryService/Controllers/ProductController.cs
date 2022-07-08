@@ -26,72 +26,109 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/{username}")]
     [Authorize(Roles = "Consumer")]
-    public async Task<string> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
+    public ActionResult<PrimitiveResponseDTO> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      if (_transistentRegisterService.PublishOrder(orderDTO, out errMsg))
+        return Ok(new PrimitiveResponseDTO("","string"));
+      else
+        return BadRequest(errMsg);
     }
 
     //Consumer confirms order (it is delivered)
     [HttpPost]
     [Route("api/[controller]/orders/{orderId}/confirm")]
     [Authorize(Roles = "Consumer")]
-    public async Task<string> ConfirmDelivery([System.Web.Http.FromUri] int orderId)
+    public ActionResult<PrimitiveResponseDTO> ConfirmDelivery([System.Web.Http.FromUri] int orderId)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      if (_transistentRegisterService.ConfirmDelivery(orderId, out errMsg))
+        return Ok(new PrimitiveResponseDTO("", "string"));
+      else
+        return BadRequest(errMsg);
     }
 
     //All orders (for Administrator)
     [HttpGet]
     [Route("api/[controller]/orders")]
     [Authorize(Roles = "Administrator")]
-    public async Task<List<OrderDTO>> Orders()
+    public ActionResult<List<OrderDTO>> Orders()
     {
-      throw new NotImplementedException();
+      return Ok(_transistentRegisterService.GetAllOrders());
+    }
+
+    //All orders items for selected order (for Administrator)
+    [HttpGet]
+    [Route("api/[controller]/orders/{orderId}/items")]
+    [Authorize(Roles = "Administrator")]
+    public ActionResult<List<OrderItemDTO>> OrderItems([System.Web.Http.FromUri] int orderId)
+    {
+      var errMsg = "";
+      var outVal = _transistentRegisterService.GetOrderItems(orderId, out errMsg);
+      if (errMsg=="")
+        return Ok(outVal);
+      else
+        return BadRequest(errMsg);
     }
 
     //Get history of my orders (for Consumer)
     [HttpGet]
     [Route("api/[controller]/orders/confirmed-for/{username}")]
     [Authorize(Roles = "Consumer")]
-    public async Task<OrderDTO> ConfirmedOrdersFor([System.Web.Http.FromUri] string username)
+    public ActionResult<List<OrderDTO>> ConfirmedOrdersFor([System.Web.Http.FromUri] string username)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      var result = _transistentRegisterService.ConfirmedOrdersFor(username, out errMsg);
+      if (errMsg == "") return result;
+      return BadRequest(errMsg);
     }
 
     //Get history of my completed orders (for Deliveryman)
     [HttpGet]
     [Route("api/[controller]/orders/completed-for/{username}")]
     [Authorize(Roles = "Deliveryman")]
-    public async Task<OrderDTO> CompletedOrdersFor([System.Web.Http.FromUri] string username)
+    public ActionResult<List<OrderDTO>> CompletedOrdersFor([System.Web.Http.FromUri] string username)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      var result = _transistentRegisterService.CompletedOrdersFor(username, out errMsg);
+      if (errMsg == "") return result;
+      return BadRequest(errMsg);
     }
 
     //Get all available orders (not taken yet - for Deliveryman)
     [HttpGet]
     [Route("api/[controller]/orders/available-for/{username}")]
     [Authorize(Roles = "Deliveryman")]
-    public async Task<string> AvailableOrdersFor([System.Web.Http.FromUri] string username)
+    public ActionResult<List<OrderDTO>> AvailableOrdersFor([System.Web.Http.FromUri] string username)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      var result = _transistentRegisterService.AvailableOrdersFor(username, out errMsg);
+      if (errMsg == "") return result;
+      return BadRequest(errMsg);
     }
 
     //Take order for delivery (for Deliveryman)
     [HttpPost]
-    [Route("api/[controller]/orders/accept/orderId")]
+    [Route("api/[controller]/orders/accept/{orderId}")]
     [Authorize(Roles = "Deliveryman")]
-    public async Task<string> AcceptOrder([System.Web.Http.FromUri] int orderId, [FromBody] string username)
+    public ActionResult<PrimitiveResponseDTO> AcceptOrder([System.Web.Http.FromUri] int orderId, [FromBody] string username)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      var result = _transistentRegisterService.AcceptOrder(orderId, username ,out errMsg);
+      if (errMsg == "") return new PrimitiveResponseDTO(result,"string");
+      return BadRequest(errMsg);
     }
 
     //Create new product (for Administrator)
     [HttpPost]
     [Route("api/[controller]/products/create")]
     [Authorize(Roles = "Administrator")]
-    public async Task<string> CreateProduct([FromBody] ProductDTO product)
+    public ActionResult<PrimitiveResponseDTO> CreateProduct([FromBody] ProductDTO product)
     {
-      throw new NotImplementedException();
+      var errMsg = "";
+      var result = _transistentRegisterService.CreateProduct(product, out errMsg);
+      if (errMsg == "") return new PrimitiveResponseDTO("", "string");
+      return BadRequest(errMsg);
     }
   }
 }

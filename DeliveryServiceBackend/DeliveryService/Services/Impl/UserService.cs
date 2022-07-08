@@ -66,7 +66,7 @@ namespace DeliveryService.Services.Impl
     {
       token = "";
       Dictionary<string, bool> stats = new Dictionary<string, bool>();
-      errMsg=UserValidator.ValidateLoginParams(loginReq, out stats);
+      errMsg=UserValidator.ValidateLoginParams(loginReq, ref stats);
       if (errMsg == "") return false;
 
       User usr = _dbContext.Users.FirstOrDefault(x => x.Email.Equals(loginReq.Email));
@@ -82,6 +82,7 @@ namespace DeliveryService.Services.Impl
         case "deliveryman":   { claims.Add(new Claim(ClaimTypes.Role, "Deliveryman"));          break; }
         case "consumer":      { claims.Add(new Claim(ClaimTypes.Role, "Consumer"));             break; }
       }
+      claims.Add(new Claim("username", usr.Username));
 
       SymmetricSecurityKey secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey.Value));
       var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -126,26 +127,39 @@ namespace DeliveryService.Services.Impl
       if (target == null)
       { errMsg = "Username does not exists"; return false; }
 
-      if (updateReq.Password != target.Password)
+      if (ExecuteEncyprion(updateReq.Password) != target.Password)
       { errMsg = "Invalid password"; return false; }
 
       errMsg = "";
-      if (updateReq.NewPassword != "" && (errMsg += ";" + UserValidator.ValidatePassword(updateReq.NewPassword)).Equals(String.Empty))
-          target.Password = ExecuteEncyprion(updateReq.NewPassword);
-     
       Dictionary<string, bool> stats = new Dictionary<string, bool>();
-      errMsg += ";" + UserValidator.ValidateUserBaseCriteria(updateReq, out stats);
+      stats.Add("NewPassword", true); 
+      if (!(updateReq.NewPassword != "" && (errMsg= UserValidator.ValidatePassword(updateReq.NewPassword) + ";").Equals(";")))           
+      {
+        errMsg = "New " + errMsg.ToLower();
+        stats["NewPassword"] = false;
+      }
+     
+      errMsg += ";" + UserValidator.ValidateUserBaseCriteria(updateReq, ref stats, new List<string>() {"Username", "Type"});
 
+      if (_dbContext.Users.FirstOrDefault(x => x.Email.Equals(updateReq.Email) && !x.Username.Equals(target.Username)) != null)
+      {
+        errMsg += ";" + "Email already used by another account";
+        if (!stats.ContainsKey("Email")) stats.Add("Email", false);
+      }
+
+      bool partialPassed = false;
       foreach (var stat in stats)
       {
         if (stat.Value)
         {
           switch (stat.Key)
           {
-            case "Name": { target.Name = updateReq.Name; break; }
-            case "Surname": { target.Surname = updateReq.Surname; break; }
-            case "Birthdate": { target.Birthdate = updateReq.Birthdate; break; }
-            case "Address": { target.Address = updateReq.Address; break; }
+            case "Name":        { target.Name = updateReq.Name;                              partialPassed = true; break; }
+            case "Surname":     { target.Surname = updateReq.Surname;                        partialPassed = true; break; }
+            case "Birthdate":   { target.Birthdate = updateReq.Birthdate;                    partialPassed = true; break; }
+            case "Address":     { target.Address = updateReq.Address;                        partialPassed = true; break; }
+            case "Email":       { target.Email = updateReq.Email;                            partialPassed = true; break; }
+            case "NewPassword": { target.Password = ExecuteEncyprion(updateReq.NewPassword); partialPassed = true; break; }
             case "ImageName":
               {
                 //string imgName = "";
@@ -179,7 +193,8 @@ namespace DeliveryService.Services.Impl
         }
       }
       _dbContext.SaveChanges();
-      return true;
+      errMsg = errMsg.TrimStart(new char[] { ';' });
+      return partialPassed;
     }
 
     public List<UserDTO> GetAll()
@@ -245,6 +260,16 @@ namespace DeliveryService.Services.Impl
     public static string GetComparablePasswordPlain(string rawPassword)
     {
       return rawPassword+_pepper;
+    }
+
+    public bool ValidatePassword(string username, string passwordPlain)
+    {
+      try
+      {
+        return ExecuteEncyprion(passwordPlain).Equals(_dbContext.Users.FirstOrDefault(x => x.Username.Equals(username)).Password);
+      }
+      catch (Exception exc)
+      { return false; }
     }
 
   }

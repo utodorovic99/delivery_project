@@ -1,0 +1,14 @@
+table {
+    width: 100%;
+  }
+
+td
+{
+  vertical-align: top;
+  font-size: smaller;
+}
+
+tr
+{
+  cursor: pointer;
+}

@@ -6,9 +6,11 @@ namespace DeliveryService.Services.Interfaces
   {
     public bool PublishOrder(OrderDTO order, out string errMsg);
 
-    public bool ConfirmDelivery(int orderId, string deliverymanUsername, out string errMsg);
+    public bool ConfirmDelivery(int orderId, out string errMsg);
 
-    public List<OrderDTO> GetAll();
+    public List<OrderDTO> GetAllOrders();
+
+    public List<OrderItemDTO> GetOrderItems(int orderId, out string errMsg);
 
     public List<OrderDTO> ConfirmedOrdersFor(string deliverymanUsername, out string errMsg);
 

@@ -1,0 +1,2 @@
+-- Dodati logout nakon password ili email change-a
+-- Pazi empty fields detected da ne kupi za unchangable kod update-a

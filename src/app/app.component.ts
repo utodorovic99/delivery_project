@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { RegistrationService } from './services/registration.service';
 
 @Component({
@@ -6,27 +6,24 @@ import { RegistrationService } from './services/registration.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'Delivery Manager';
-  public SPVisualState = 0;
-  public diplayLoginHTMLContext=0;
+  @Output() public SPVisualContext ;
+  @Output() public SPVisualState ;
 
-  constructor(private registrationService: RegistrationService) 
-  { 
-    let role=-1;
-    switch(this.registrationService.getUserRole(localStorage.getItem('token')))
-    {
-      case "Administrator": { role=1; break;}
-      case "Consumer":      { role=3; break;}
-      case "Deliveryman":   { role=2; break;}     
-    }
-    if(role==-1) role=0;
-    this.SPVisualState=role;
+  ngOnInit()
+  {
+    this.SPVisualContext = 'Login';
+    this.SPVisualState= 'Home';
   }
 
   OnSPVisualState_changed($event)
   {
-    console.log('Changing to:' + $event)
     this.SPVisualState =$event;
+  }
+
+  OnSPVisualContext_changed($event)
+  {
+    this.SPVisualContext=$event;
   }
 }

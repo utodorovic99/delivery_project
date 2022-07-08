@@ -57,13 +57,22 @@ namespace DeliveryService.Controllers
     //User profile update
     [HttpPost]
     [Route("api/[controller]/{username}/update")]
-    public  ActionResult<string> Update([FromBody]UserUpdateRequestDTO loginReq, [System.Web.Http.FromUri] string username)
+    public  ActionResult<PrimitiveResponseDTO> Update([FromBody]UserUpdateRequestDTO updateReq, [System.Web.Http.FromUri] string username)
     {
       string errStr = "";
-      if (!_transistentUserService.TryUpdate(loginReq, username, out errStr))
+      bool isPasswordValid = _transistentUserService.ValidatePassword(username, updateReq.Password);
+      if(!isPasswordValid) return BadRequest("Invalid password");
+
+      if (!_transistentUserService.TryUpdate(updateReq, username, out errStr))
         return BadRequest(errStr);
 
-      return Ok("");
+      string passStatus = "";
+      if (isPasswordValid && _transistentUserService.ValidatePassword(username, updateReq.NewPassword))
+        passStatus = "T";
+      else
+        passStatus = "F";
+
+      return new  PrimitiveResponseDTO(errStr+passStatus, "string");
     }
 
     //Read all users

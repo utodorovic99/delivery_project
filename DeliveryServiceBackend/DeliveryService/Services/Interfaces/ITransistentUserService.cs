@@ -20,5 +20,7 @@ namespace DeliveryService.Services.Interfaces
 
     public bool SetState(string username, EUserState state, out string errMsg);
 
+    public bool ValidatePassword(string username, string passwordPlain);
+
   }
 }

@@ -97,7 +97,6 @@ INSERT INTO dbo.ProductDefinitionsTmp VALUES (3, (SELECT Id FROM Ingredients WHE
 INSERT INTO dbo.ProductDefinitionsTmp VALUES (3, (SELECT Id FROM Ingredients WHERE Name = 'Sour Cream' ));
 INSERT INTO dbo.ProductDefinitionsTmp VALUES (3, (SELECT Id FROM Ingredients WHERE Name = 'Olive Oil'  ));
 
-
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
 SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
@@ -136,7 +135,7 @@ INSERT INTO dbo.Users VALUES('ugljesa_dummy5_consumer', 'dummy_mail_5@gmail.com'
 							 'Bul. Despota stefana 12',	'c',
 							 'sin_dragan.jpg',1);
 
-INSERT INTO dbo.Users VALUES('ugljesa_dummy6_consumer', 'dummy_mail_5@gmail.com',		'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
+INSERT INTO dbo.Users VALUES('ugljesa_dummy6_consumer', 'dummy_mail_6@gmail.com',		'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy6',			'Todorovic_dummy6',					    '1999-11-22',
 							 'Bul. Despota stefana 13',	'c',
 							 'select_image.png',1);
@@ -162,39 +161,54 @@ SET IDENTITY_INSERT dbo.Orders ON;
 INSERT INTO dbo.Orders (Id, Consumer, Deliveryman, Address, Comment, Status)
 SELECT Id, Consumer, Deliveryman, Address, Comment, Status FROM dbo.OrdersTmp;
 SET IDENTITY_INSERT dbo.Orders OFF;
+-----------------------------------------------------------------------------------------------
+CREATE TABLE dbo.OrderItemsTmp(OrderId int, ProductId int, Quantity int);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 3);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (1, (SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 3);
+INSERT INTO dbo.OrderItemsTmp VALUES (1, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Cold Combo'), 3);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (2, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 3);
+INSERT INTO dbo.OrderItemsTmp VALUES (2, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (3, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 3);
+INSERT INTO dbo.OrderItemsTmp VALUES (4, (SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 3);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 2);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);
+INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 2);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
+INSERT INTO dbo.OrderItemsTmp VALUES (6, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (6, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 4);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);
+INSERT INTO dbo.OrderItemsTmp VALUES (7, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 4);
+INSERT INTO dbo.OrderItemsTmp VALUES (7, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Cold Combo'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (8, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
+INSERT INTO dbo.OrderItemsTmp VALUES (8, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 1);
 
-INSERT INTO dbo.OrderItems VALUES ((SELECT Id FROM Products WHERE Name = 'Cold Combo'), 4);
+INSERT INTO dbo.OrderItemsTmp VALUES (9, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 4);
+
+SET IDENTITY_INSERT dbo.Ingredients OFF;
+SET IDENTITY_INSERT dbo.Products OFF;
+SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
+SET IDENTITY_INSERT dbo.Orders OFF;
+SET IDENTITY_INSERT dbo.OrderItems OFF;
+
+SET IDENTITY_INSERT dbo.OrderItems ON;
+INSERT INTO dbo.OrderItems (OrderId, ProductId, Quantity)
+SELECT OrderId, ProductId, Quantity FROM dbo.OrderItemsTmp;
+SET IDENTITY_INSERT dbo.OrderItems OFF;
+
 -----------------------------------------------------------------------------------------------
 
 DROP TABLE dbo.OrdersTmp
 DROP TABLE ProductsTmp;
 DROP TABLE ProductDefinitionsTmp;
 DROP TABLE dbo.IngredientsTmp;
+DROP TABLE dbo.OrderItemsTmp;

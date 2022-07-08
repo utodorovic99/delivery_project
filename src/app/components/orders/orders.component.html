@@ -1,0 +1,77 @@
+
+<div>
+  <table>
+    <tr>
+      <td style="width: 60%;">
+        <mat-table [dataSource]="dataSourceOrders" class="mat-elevation-z8" style="background-color: #4ECCA3;">  
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> ID. </th>
+            <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.id}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="consumer">
+            <th mat-header-cell *matHeaderCellDef> Consumer </th>
+            <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.consumer}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="deliveryman">
+            <th mat-header-cell *matHeaderCellDef> Deliveryman </th>
+            <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.deliveryman}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef> Price<br><p style="font-size: x-small;">(Delivery Fee: {{deliveryFee}})</p></th>
+            <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.price}} </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="address">
+              <th mat-header-cell *matHeaderCellDef> Address </th>
+              <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.address}} </td>
+            </ng-container>
+      
+            <ng-container matColumnDef="comment">
+              <th mat-header-cell *matHeaderCellDef> Comment </th>
+              <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.comment}} </td>
+            </ng-container>
+      
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let elementOrder"> {{elementOrder.status}} </td>
+            </ng-container>
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsOrders"></tr>
+          <tr (click) = "tableOrdersRowClick(rowOrder)" mat-row *matRowDef="let rowOrder; columns: displayedColumnsOrders;"></tr>
+        </mat-table>
+      </td>
+      <td style="width:40%">
+        <mat-table [dataSource]="dataSourceOrderItems" class="mat-elevation-z8" style="background-color: #a6b2ebff;">  
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.name}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Quantity </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.quantity}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="unit price">
+            <th mat-header-cell *matHeaderCellDef> Unit Price </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.unitPrice}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="total item price">
+            <th mat-header-cell *matHeaderCellDef> Total Item Price </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.totalItemPrice}} </td>
+          </ng-container>
+            
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderItems"></tr>
+          <tr  mat-row *matRowDef="let rowOrderItem; columns: displayedColumnsOrderItems;"></tr>
+        </mat-table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+  
+  

@@ -37,11 +37,12 @@ export class RegistrationService {
                         {'headers':this.headers});   
   }
 
-  public getUserRole(rawToken:string | null):string
+  public getTokenJSON(rawToken:string | null):string
   {
     if(rawToken === null) return "";
     try {
-      return JSON.parse(JSON.stringify(jwt_decode(rawToken as string)))["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      
+      return JSON.stringify(jwt_decode(rawToken as string));
     } catch(Error) {
       return "";
     }
