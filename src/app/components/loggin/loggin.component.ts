@@ -164,7 +164,6 @@ export class LogginComponent implements OnInit {
       reader.readAsDataURL(this.selected_img);
   }
 
-
   //#region UISetters 
   setLoginEnvironment()
   {

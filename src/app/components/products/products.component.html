@@ -21,7 +21,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumnsProducts"></tr>
           <tr mat-row *matRowDef="let rowProduct; columns: displayedColumnsProducts;"></tr>
         </mat-table>
-        <mat-paginator [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons pag></mat-paginator>
+        <mat-paginator #productPaginator="matPaginator" [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons pag></mat-paginator>
       </td>
 
       <td style="width: 30%;">
@@ -31,7 +31,7 @@
             <td>
               <div class="form-outline form-white mb-4">
                 <label class="form-label-lg" for="newProdName">Name:</label>
-                <input style="width: 60%;" name="name" required  type="text" id="newProdName" class="form-control form-control-sm" value="{{name}}" placeholder="Product Name">
+                <input [(ngModel)]="name" style="width: 60%;" name="name" required  type="text" id="newProdName" class="form-control form-control-sm" placeholder="Product Name">
               </div>                  
             </td>
           </tr>
@@ -39,7 +39,7 @@
             <td>
               <div class="form-outline form-white mb-4">
                 <label class="form-label-lg" for="newProdPrice">Price:</label>
-                <input style="width: 60%;" name="price" required  type="text" id="newProdPrice" class="form-control form-control-sm" value="{{price}}" placeholder="Product Price"/>
+                <input [(ngModel)]="price" style="width: 60%;" name="price" required  type="text" id="newProdPrice" class="form-control form-control-sm" placeholder="Product Price"/>
               </div>                  
             </td>
           </tr>
@@ -57,15 +57,21 @@
                       </div>
                     </td>
                     <td style="vertical-align:middle;">
-                      <button (click)="addIngredient()" class="btn btn-primary" style="font-size: xx-small;">Add</button> 
-                      <button (click)="productItemRemove()" class="btn btn-danger"  style="font-size: xx-small;">Remove </button>
+                      <button  (click)="addIngredient()" class="btn btn-primary" style="font-size: xx-small;"> Add </button> 
+                      <button  (click)="productItemRemove()" class="btn btn-danger"  style="font-size: xx-small;">Remove </button>
+                      <button  (click)="saveProduct()" class="btn btn-success" style="font-size: xx-small;"> Save </button>
                     </td>
                   </tr>
                 </table>           
             </td>
           </tr>
 
-          
+          <tr>
+            <td>
+              <p name="errLbl" style="color: #CD5C5C;">{{errTxt}}</p>
+            </td>
+          </tr>
+
           <tr>
             <mat-table id="#productItemsTable" [dataSource]="dataSourceSelectedIngredients" class="mat-elevation-z8 demo-table" style="background-color: #4ECCA3;">                     
               <ng-container matColumnDef="name">

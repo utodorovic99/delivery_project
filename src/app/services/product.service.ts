@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { Order } from '../models/order';
 import { Product } from '../models/product';
 import { OrderItem } from '../models/orderItem';
+import { PrimitiveResponse } from '../models/primitiveResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,35 @@ export class ProductService {
     return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, {headers: this.headers}); 
   }
 
-  public getOrderItemsFor(http:HttpClient, orderId:string):Observable<number | Array<OrderItem>>
+  public getAvailableOrders(http:HttpClient, username:string):Observable<number | Array<Order>>
+  {
+    let serviceUrl="orders";
+    let subserviceUrl = 'available-for'
+    return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subserviceUrl}/${username}`, {headers: this.headers}); 
+  }
+
+  public getCompletedOrders(http:HttpClient, username:string):Observable<number | Array<Order>>
+  {
+    let serviceUrl="orders";
+    let subserviceUrl = 'completed-for'
+    return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subserviceUrl}/${username}`, {headers: this.headers});  
+  }
+
+  public getHistoryOrders(http:HttpClient, username:string):Observable<number | Array<Order>>
+  {
+    let serviceUrl="orders";
+    let subserviceUrl = 'confirmed-for'
+    return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subserviceUrl}/${username}`, {headers: this.headers});  
+  }
+  
+  public getCurrentOrder(http:HttpClient, username:string):Observable<number | Array<Order>>
+  {
+    let serviceUrl="orders";
+    let subserviceUrl = 'current-for'
+    return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subserviceUrl}/${username}`, {headers: this.headers});  
+  }
+
+  public getOrderItemsFor(http:HttpClient, orderId:string, username:string):Observable<number | Array<OrderItem>>
   {
     let serviceUrl="orders";
     return http.get<Array<OrderItem>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${orderId}/items`, {headers: this.headers}); 
@@ -43,6 +72,14 @@ export class ProductService {
     return http.get<Array<string>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}`, {headers: this.headers}); 
   }
 
+  public addProduct(http:HttpClient, product:Product):Observable<number | PrimitiveResponse>
+  {
+    let serviceUrl="products";
+    let subService ="create";
+
+    let body = JSON.stringify(product);
+    return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}`,body, {headers: this.headers}); 
+  }
 }
 
 

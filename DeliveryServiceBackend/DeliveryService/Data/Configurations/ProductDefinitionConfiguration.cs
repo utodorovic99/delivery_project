@@ -9,7 +9,6 @@ namespace DeliveryService.Data.Configurations
     public void Configure(EntityTypeBuilder<ProductDefiniton> builder)
     {
       builder.HasKey(x => new { x.ProductId, x.IngredientId});
-      builder.Property(x => x.ProductId).ValueGeneratedOnAdd();
 
       builder.Property(x => x.ProductId).IsRequired();
       builder.Property(x => x.IngredientId).IsRequired();

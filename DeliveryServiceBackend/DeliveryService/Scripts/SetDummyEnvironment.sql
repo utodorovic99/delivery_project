@@ -18,7 +18,6 @@ DELETE FROM dbo.Users
 
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
-SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
 
 CREATE TABLE IngredientsTmp(Id int, Name varchar(35));
@@ -99,17 +98,14 @@ INSERT INTO dbo.ProductDefinitionsTmp VALUES (3, (SELECT Id FROM Ingredients WHE
 
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
-SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
 
 SET IDENTITY_INSERT dbo.Products ON;
 INSERT INTO dbo.Products (Id, Name, Price) 
 SELECT Id, Name, Price FROM dbo.ProductsTmp;
 SET IDENTITY_INSERT dbo.Products OFF;
 
-SET IDENTITY_INSERT dbo.ProductDefinitions ON;
 INSERT INTO dbo.ProductDefinitions (ProductId, IngredientId)
 SELECT ProductId, IngredientId FROM dbo.ProductDefinitionsTmp;
-SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
 -----------------------------------------------------------------------------------------------
 INSERT INTO dbo.Users VALUES('ugljesa_dummy1_admin',    'dummy_mail_1@gmail.com',	'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy1',		    'Todorovic_dummy1',					'1999-11-17',						
@@ -154,7 +150,6 @@ INSERT INTO dbo.OrdersTmp VALUES (9, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_
 
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
-SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
 
 SET IDENTITY_INSERT dbo.Orders ON;
@@ -196,7 +191,6 @@ INSERT INTO dbo.OrderItemsTmp VALUES (9, (SELECT Id FROM Products WHERE Name = '
 
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
-SET IDENTITY_INSERT dbo.ProductDefinitions OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
 SET IDENTITY_INSERT dbo.OrderItems OFF;
 

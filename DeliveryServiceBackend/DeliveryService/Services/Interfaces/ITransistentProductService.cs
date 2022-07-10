@@ -18,6 +18,8 @@ namespace DeliveryService.Services.Interfaces
 
     public List<OrderDTO> AvailableOrdersFor(string deliverymanUsername, out string errMsg);
 
+    public List<OrderDTO> CurrentOrderFor(string username, string userType, out string errMsg);
+
     public string AcceptOrder(int orderId, string deliverymanUsername, out string errStr);
 
     public bool CreateProduct(ProductDTO product, out string errMsg);
@@ -25,5 +27,12 @@ namespace DeliveryService.Services.Interfaces
     public List<ProductDTO> GetAllProducts(out string errMsg);
 
     public List<string> GetAllProductIngredients(out string errMsg);
+
+    public bool IsOrderConsumer(int orderId, string username);
+
+    public bool IsOrderDeliveryman (int orderId, string username);
+
+    public bool IsOrderAvailable(int orderId, out string errMsg);
+
   }
 }

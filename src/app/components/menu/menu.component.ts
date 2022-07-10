@@ -46,4 +46,28 @@ export class MenuComponent implements OnInit {
     this.SPVisualState_changedEvent.emit("Products");
   }
 
+  renderAvailableOrdersView()
+  {
+    this.SPVisualState_changedEvent.emit("OrdersAvailable");
+  }
+
+  renderCompletedOrdersView()
+  {
+    this.SPVisualState_changedEvent.emit("OrdersCompleted");
+  }
+
+  renderCurrentOrderView()
+  {
+    this.SPVisualState_changedEvent.emit("OrdersCurrent");
+  }
+
+  renderHistoryOrderView()
+  {
+    this.SPVisualState_changedEvent.emit("History");
+  }
+
+  renderNewCurrentOrderView()
+  {
+    this.SPVisualState_changedEvent.emit("New-Current");
+  }
 }

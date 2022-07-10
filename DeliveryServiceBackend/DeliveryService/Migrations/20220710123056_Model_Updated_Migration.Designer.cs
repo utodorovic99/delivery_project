@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryService.Migrations
 {
     [DbContext(typeof(DeliveryDataContext))]
-    [Migration("20220703190009_Model_Update_03_07_2022")]
-    partial class Model_Update_03_07_2022
+    [Migration("20220710123056_Model_Updated_Migration")]
+    partial class Model_Updated_Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -126,10 +126,7 @@ namespace DeliveryService.Migrations
             modelBuilder.Entity("DeliveryService.Model.ProductDefiniton", b =>
                 {
                     b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
 
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");

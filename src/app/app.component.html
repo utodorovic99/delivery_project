@@ -23,7 +23,7 @@
                 </div>
 
                 <div *ngSwitchCase="'Orders'">
-                   <app-orders></app-orders>
+                   <app-orders [ordersContext] = "'all'"></app-orders>
                 </div>
 
                 <div *ngSwitchCase="'Products'">
@@ -34,11 +34,55 @@
         </div>
 
         <div *ngSwitchCase="'Deliveryman'"> <!--Deliveryman environment-->
-            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' [roleContext] = "'Deliveryman'"></app-menu>
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Deliveryman'"></app-menu>
+            <div class="row" [ngSwitch]="SPVisualState">
+                
+                <div *ngSwitchCase="'Home'" style="align-items: center;" >
+                    <h1>Welcome to delivery service!</h1>
+                    <img style="width: max-content; height: max-content; padding-top: 8%;" src="assets\Images\home_page_img.png">
+                </div>
+
+                <div *ngSwitchCase="'Profile'">
+                    <app-profile (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)'></app-profile>
+                </div>
+                
+                <div *ngSwitchCase="'OrdersAvailable'">
+                    <app-orders [ordersContext] = "'available'"></app-orders>
+                 </div>
+ 
+                <div *ngSwitchCase="'OrdersCompleted'">
+                    <app-orders [ordersContext] = "'completed'"></app-orders>
+                </div>
+
+                <div *ngSwitchCase="'OrdersCurrent'">
+                    <app-orders [ordersContext] = "'current'"></app-orders>
+                </div>
+
+            </div>
         </div>
 
         <div *ngSwitchCase="'Consumer'"> <!--Consumer environment-->
-            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' [roleContext] ="'Consumer'"></app-menu>
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Consumer'"></app-menu>
+            <div class="row" [ngSwitch]="SPVisualState">
+                
+                <div *ngSwitchCase="'Home'" style="align-items: center;" >
+                    <h1>Welcome to delivery service!</h1>
+                    <img style="width: max-content; height: max-content; padding-top: 8%;" src="assets\Images\home_page_img.png">
+                </div>
+
+                <div *ngSwitchCase="'Profile'">
+                    <app-profile (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)'></app-profile>
+                </div>
+ 
+                <div *ngSwitchCase="'History'">
+                    <app-orders [ordersContext] = "'history'"></app-orders>
+                </div>
+                <!--CurrentOrderViewState_changedEvent-->
+                <div *ngSwitchCase="'New-Current'">                  
+                    <app-orders [ordersContext] = "'new-current'"></app-orders>
+                </div>
+
+            </div>
         </div>
 
     </div>

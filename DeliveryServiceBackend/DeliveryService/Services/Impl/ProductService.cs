@@ -25,7 +25,7 @@ namespace DeliveryService.Services.Impl
       if (deliveryman==null)
       { errMsg = "Invalid useranme."; return $"ERR:{errMsg}"; }
 
-      if (!deliveryman.Type.Equals("d"))
+      if (!deliveryman.Type.ToString().Equals("d"))
       { errMsg = "Invalid user type."; return $"ERR:{errMsg}"; }
 
       if(_dbContext.Orders.FirstOrDefault(x=>x.Deliveryman.Equals(deliverymanUsername) &&
@@ -54,6 +54,12 @@ namespace DeliveryService.Services.Impl
       return now;
     }
 
+    public List<OrderDTO> GetAllOrders()
+    {
+      var orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList());
+      AttachItemsToOrder(ref orders);
+      return orders;
+    }
     public List<OrderDTO> AvailableOrdersFor(string deliverymanUsername, out string errMsg)
     {
       errMsg = "";
@@ -62,7 +68,7 @@ namespace DeliveryService.Services.Impl
       if (deliveryman == null)
       { errMsg = "Invalid useranme."; return orders; }
 
-      if (!deliveryman.Type.Equals("d"))
+      if (!deliveryman.Type.ToString().Equals("d"))
       { errMsg = "Invalid user type."; return orders; }
 
       if (_dbContext.Orders.FirstOrDefault(x => x.Deliveryman.Equals(deliverymanUsername) &&
@@ -75,7 +81,7 @@ namespace DeliveryService.Services.Impl
       return orders;
     }
 
-    public List<OrderDTO> CompletedOrdersFor(string deliverymanUsername, out string errMsg) //For customer
+    public List<OrderDTO> CompletedOrdersFor(string deliverymanUsername, out string errMsg) //For deliveryman
     {
       errMsg = "";
       var orders = new List<OrderDTO>();
@@ -83,14 +89,66 @@ namespace DeliveryService.Services.Impl
       if (deliveryman == null)
       { errMsg = "Invalid useranme."; return orders; }
 
-      if (!deliveryman.Type.Equals("c"))
+      if (!deliveryman.Type.ToString().Equals("d"))
       { errMsg = "Invalid user type."; return orders; }
 
       orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList().Where(x => x.Status.Equals('c') &&
-                                                                          x.Consumer.Equals(deliverymanUsername)));
+                                                                          x.Deliveryman.Equals(deliverymanUsername)));
 
       AttachItemsToOrder(ref orders);
       return orders;
+    }
+
+    public List<OrderDTO> ConfirmedOrdersFor(string deliverymanUsername, out string errMsg)  //For customer
+    {
+      errMsg = "";
+      var orders = new List<OrderDTO>();
+      var deliveryman = _dbContext.Users.Find(deliverymanUsername);
+      if (deliveryman == null)
+      { errMsg = "Invalid useranme."; return orders; }
+
+      if (!deliveryman.Type.ToString().Equals("c"))
+      { errMsg = "Invalid user type."; return orders; }
+
+      orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList().Where(x => x.Status.Equals('c') &&
+                                                                            x.Consumer.Equals(deliverymanUsername)));
+      AttachItemsToOrder(ref orders);
+
+      return orders;
+    }
+
+    public List<OrderDTO> CurrentOrderFor(string username, string userType, out string errMsg)
+    {
+      errMsg = "";
+      var orders = new List<OrderDTO>();
+      var deliveryman = _dbContext.Users.Find(username);
+      if (deliveryman == null)
+      { errMsg = "Invalid useranme."; return orders; }
+
+      switch (userType)
+      {
+        case "d":
+          {
+            if (!deliveryman.Type.ToString().Equals("d"))
+            { errMsg = "Invalid user type."; return orders; }
+            orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
+                                                                                  x.Deliveryman.Equals(username)).First() });
+            AttachItemsToOrder(ref orders);
+            return orders;
+          }
+
+        case "c":
+          {
+            if (!deliveryman.Type.ToString().Equals("c"))
+            { errMsg = "Invalid user type."; return orders; }
+            orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
+                                                                                  x.Consumer.Equals(username)).First()});
+            AttachItemsToOrder(ref orders);
+            return orders;
+          }
+
+          default: { return new List<OrderDTO>(); }
+      }
     }
 
     public bool ConfirmDelivery(int orderId, out string errMsg)
@@ -105,31 +163,13 @@ namespace DeliveryService.Services.Impl
       if (deliveryman == null)
       { errMsg = "Invalid useranme."; return false; }
 
-      if (!deliveryman.Type.Equals("d"))
+      if (!deliveryman.Type.ToString().Equals('d'))
       { errMsg = "Invalid user type."; return false; }
 
       order.Status = 'c';
       _dbContext.SaveChangesAsync();
 
       return true;
-    }
-
-    public List<OrderDTO> ConfirmedOrdersFor(string deliverymanUsername, out string errMsg)  //For deliveryman
-    {
-      errMsg = "";
-      var orders = new List<OrderDTO>();
-      var deliveryman = _dbContext.Users.Find(deliverymanUsername);
-      if (deliveryman == null)
-      { errMsg = "Invalid useranme."; return orders; }
-
-      if (!deliveryman.Type.Equals("d"))
-      { errMsg = "Invalid user type."; return orders; }
-
-      orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList().Where(x => x.Status.Equals('c') &&
-                                                                            x.Deliveryman.Equals(deliverymanUsername)));
-      AttachItemsToOrder(ref orders);
-
-      return orders;
     }
 
     public bool CreateProduct(ProductDTO product, out string errMsg)
@@ -146,9 +186,8 @@ namespace DeliveryService.Services.Impl
 
       var productModel = _mapper.Map<Product>(product);
 
-      _dbContext.Products.Add(productModel);
+      productModel=_dbContext.Products.Add(productModel).Entity;
       _dbContext.SaveChanges();
-      productModel = _dbContext.Products.FirstOrDefault(x => x.Name.Equals(productModel));
       Ingredient ingredientModel = null;
       foreach (var ingredient in product.Ingredients)
       {
@@ -157,13 +196,6 @@ namespace DeliveryService.Services.Impl
       }
       _dbContext.SaveChangesAsync();
       return true;
-    }
-
-    public List<OrderDTO> GetAllOrders()
-    {
-      var orders = _mapper.Map<List<OrderDTO>>(_dbContext.Orders.ToList());
-      AttachItemsToOrder(ref orders);
-      return orders;
     }
 
     public bool PublishOrder(OrderDTO order, out string errMsg)
@@ -200,10 +232,12 @@ namespace DeliveryService.Services.Impl
       Product product = null;
       Dictionary<int, List<OrderItem>> orderItems = new Dictionary<int, List<OrderItem>>(); //To avoid multiple streams opened at the momement issue
       foreach (var order in orders)
-        orderItems.Add(order.Id, new List<OrderItem>());
+        orderItems.Add(order.Id, new List<OrderItem>());  //Initialize dictionary
 
-      foreach (var orderItem in _dbContext.OrderItems)  //Iterate trough order items
+      foreach (var orderItem in _dbContext.OrderItems.ToList().Where(x=>orderItems.ContainsKey(x.OrderId)))  //Iterate trough order items
+      {
         orderItems[orderItem.OrderId].Add(orderItem);   //Attach to order
+      }
 
       foreach(var order in orders)
       {
@@ -264,6 +298,25 @@ namespace DeliveryService.Services.Impl
     {
       errMsg = "";
       return _dbContext.Ingredients.Select(x => x.Name).ToList();
+    }
+
+    public bool IsOrderConsumer(int orderId, string username)
+    {
+      return _dbContext.Orders.ToList().Where(x=>x.Id.Equals(orderId) && x.Consumer.Equals(username)).ToList().Count>0;
+    }
+
+    public bool IsOrderDeliveryman(int orderId, string username)
+    {
+      return _dbContext.Orders.ToList().Where(x => x.Id.Equals(orderId) && x.Deliveryman.Equals(username)).ToList().Count > 0;
+    }
+
+    public bool IsOrderAvailable(int orderId, out string errMsg)
+    {
+      errMsg = "";
+      var order = _dbContext.Orders.FirstOrDefault(x=>x.Id.Equals(orderId));
+      if (order == null) { errMsg = "Order not found;"; return false; }
+
+      return (order.Deliveryman == "" || order.Deliveryman == null);
     }
   }
 }

@@ -272,5 +272,10 @@ namespace DeliveryService.Services.Impl
       { return false; }
     }
 
+    public string GetRole(string username)
+    {
+      return _dbContext.Users.ToList().Where(x => x.Username.Equals(username)).ToList().First().Type.ToString();
+    }
+
   }
 }

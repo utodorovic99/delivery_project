@@ -4,7 +4,7 @@
 
 namespace DeliveryService.Migrations
 {
-    public partial class Model_Update_03_07_2022 : Migration
+    public partial class Model_Updated_Migration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -56,8 +56,7 @@ namespace DeliveryService.Migrations
                 name: "ProductDefinitions",
                 columns: table => new
                 {
-                    ProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     IngredientId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

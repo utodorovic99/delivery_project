@@ -20,9 +20,26 @@
             <a class="nav-link" (click)="renderOrdersView()" style="cursor: pointer;">Orders</a>
           </li>
 
-          <li class="nav-item" *ngSwitchCase="'Administrator'">
-            <a class="nav-link" (click)="renderProductsView()" style="cursor: pointer;">Products</a>
+          <li class="nav-item" *ngSwitchCase="'Deliveryman'">
+            <a class="nav-link" (click)="renderAvailableOrdersView()" style="cursor: pointer;">Available Orders</a>
           </li>
+
+          <li class="nav-item" *ngSwitchCase="'Deliveryman'">
+            <a class="nav-link" (click)="renderCompletedOrdersView()" style="cursor: pointer;">Completed Orders</a>
+          </li>
+
+          <li class="nav-item" *ngSwitchCase="'Deliveryman'">
+            <a class="nav-link" (click)="renderCurrentOrderView()" style="cursor: pointer;">Current Order</a>
+          </li>
+
+          <li class="nav-item" *ngSwitchCase="'Consumer'">
+            <a class="nav-link" (click)="renderHistoryOrderView()" style="cursor: pointer;">History</a>
+          </li>
+
+          <li class="nav-item" *ngSwitchCase="'Consumer'">
+            <a class="nav-link" (click)="renderNewCurrentOrderView()" style="cursor: pointer;">New/Current</a>
+          </li>
+
         </ul>
       </div>
   

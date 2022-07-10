@@ -4,6 +4,7 @@ using DeliveryService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DeliveryService.Controllers
 {
@@ -14,12 +15,14 @@ namespace DeliveryService.Controllers
     private readonly DeliveryDataContext _context;
     private readonly string _img_repo_base_path = Path.Combine(Directory.GetCurrentDirectory(), "ImgRepo");
 
-    private readonly ITransistentProductService _transistentRegisterService;
+    private readonly ITransistentProductService _transistentProductsService;
+    private readonly ITransistentUserService _transistentUserService;
 
-    public ProductController(DeliveryDataContext context, ITransistentProductService transistentRegisterService)
+    public ProductController(DeliveryDataContext context, ITransistentProductService _transistentProductsService, ITransistentUserService _transistentUserService)
     {
       _context = context;
-      _transistentRegisterService = transistentRegisterService;
+      this._transistentProductsService  = _transistentProductsService;
+      this._transistentUserService      = _transistentUserService;
     }
 
     //Consumer executes order
@@ -29,7 +32,7 @@ namespace DeliveryService.Controllers
     public ActionResult<PrimitiveResponseDTO> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
     {
       var errMsg = "";
-      if (_transistentRegisterService.PublishOrder(orderDTO, out errMsg))
+      if (_transistentProductsService.PublishOrder(orderDTO, out errMsg))
         return Ok(new PrimitiveResponseDTO("","string"));
       else
         return BadRequest(errMsg);
@@ -42,7 +45,7 @@ namespace DeliveryService.Controllers
     public ActionResult<PrimitiveResponseDTO> ConfirmDelivery([System.Web.Http.FromUri] int orderId)
     {
       var errMsg = "";
-      if (_transistentRegisterService.ConfirmDelivery(orderId, out errMsg))
+      if (_transistentProductsService.ConfirmDelivery(orderId, out errMsg))
         return Ok(new PrimitiveResponseDTO("", "string"));
       else
         return BadRequest(errMsg);
@@ -54,21 +57,36 @@ namespace DeliveryService.Controllers
     [Authorize(Roles = "Administrator")]
     public ActionResult<List<OrderDTO>> Orders()
     {
-      return Ok(_transistentRegisterService.GetAllOrders());
+      return Ok(_transistentProductsService.GetAllOrders());
     }
 
-    //All orders items for selected order (for Administrator)
+    //All orders items for selected order
     [HttpGet]
     [Route("api/[controller]/orders/{orderId}/items")]
-    [Authorize(Roles = "Administrator")]
     public ActionResult<List<OrderItemDTO>> OrderItems([System.Web.Http.FromUri] int orderId)
     {
+      
       var errMsg = "";
-      var outVal = _transistentRegisterService.GetOrderItems(orderId, out errMsg);
-      if (errMsg=="")
-        return Ok(outVal);
-      else
-        return BadRequest(errMsg);
+      var identity = HttpContext.User.Identity as ClaimsIdentity;
+      string username = "";
+      if (identity != null)
+        username = identity.FindFirst("username").Value;
+
+      //Can see if i'm admin, if i'm one who ordered it, i'm one who delivers it or if it is still has not deliveryman
+      var role = _transistentUserService.GetRole(username);
+      if (role == "a" ||
+          _transistentProductsService.IsOrderAvailable(orderId, out errMsg) ||
+         (role == "c" && _transistentProductsService.IsOrderConsumer(orderId, username)) ||
+         (role == "d" && _transistentProductsService.IsOrderDeliveryman(orderId, username)))
+      {
+
+        var outVal = _transistentProductsService.GetOrderItems(orderId, out errMsg);
+        if (errMsg == "")
+          return Ok(outVal);
+        else
+          return BadRequest(errMsg);
+      }
+      return BadRequest("Access denied");
     }
 
     //Get history of my orders (for Consumer)
@@ -78,7 +96,7 @@ namespace DeliveryService.Controllers
     public ActionResult<List<OrderDTO>> ConfirmedOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
-      var result = _transistentRegisterService.ConfirmedOrdersFor(username, out errMsg);
+      var result = _transistentProductsService.ConfirmedOrdersFor(username, out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
     }
@@ -90,7 +108,21 @@ namespace DeliveryService.Controllers
     public ActionResult<List<OrderDTO>> CompletedOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
-      var result = _transistentRegisterService.CompletedOrdersFor(username, out errMsg);
+      var result = _transistentProductsService.CompletedOrdersFor(username, out errMsg);
+      if (errMsg == "") return result;
+      return BadRequest(errMsg);
+    }
+
+
+    //Get my current taken delivery (for Deliveryman)
+    [HttpGet]
+    [Route("api/[controller]/orders/current-for/{username}")]
+    [Authorize(Roles = "Deliveryman,Consumer")]
+    public ActionResult<List<OrderDTO>>CurrentOrderFor([System.Web.Http.FromUri] string username)
+    {
+      var errMsg = "";
+      var userRole = _transistentUserService.GetRole(username);
+      var result = _transistentProductsService.CurrentOrderFor(username, userRole, out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
     }
@@ -102,7 +134,7 @@ namespace DeliveryService.Controllers
     public ActionResult<List<OrderDTO>> AvailableOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
-      var result = _transistentRegisterService.AvailableOrdersFor(username, out errMsg);
+      var result = _transistentProductsService.AvailableOrdersFor(username, out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
     }
@@ -114,7 +146,7 @@ namespace DeliveryService.Controllers
     public ActionResult<PrimitiveResponseDTO> AcceptOrder([System.Web.Http.FromUri] int orderId, [FromBody] string username)
     {
       var errMsg = "";
-      var result = _transistentRegisterService.AcceptOrder(orderId, username ,out errMsg);
+      var result = _transistentProductsService.AcceptOrder(orderId, username ,out errMsg);
       if (errMsg == "") return new PrimitiveResponseDTO(result,"string");
       return BadRequest(errMsg);
     }
@@ -126,7 +158,7 @@ namespace DeliveryService.Controllers
     public ActionResult<PrimitiveResponseDTO> CreateProduct([FromBody] ProductDTO product)
     {
       var errMsg = "";
-      var result = _transistentRegisterService.CreateProduct(product, out errMsg);
+      var result = _transistentProductsService.CreateProduct(product, out errMsg);
       if (errMsg == "") return new PrimitiveResponseDTO("", "string");
       return BadRequest(errMsg);
     }
@@ -134,11 +166,10 @@ namespace DeliveryService.Controllers
     //Get all products
     [HttpGet]
     [Route("api/[controller]/products")]
-    [Authorize(Roles = "Administrator")]
     public ActionResult<List<ProductDTO>>Products()
     {
       var errMsg = "";
-      var result = _transistentRegisterService.GetAllProducts(out errMsg);
+      var result = _transistentProductsService.GetAllProducts(out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
     }
@@ -146,11 +177,10 @@ namespace DeliveryService.Controllers
     //Get all product ingredients
     [HttpGet]
     [Route("api/[controller]/products/ingredients")]
-    [Authorize(Roles = "Administrator")]
     public ActionResult<List<string>> ProductIngredients()
     {
       var errMsg = "";
-      var result = _transistentRegisterService.GetAllProductIngredients(out errMsg);
+      var result = _transistentProductsService.GetAllProductIngredients(out errMsg);
       if (errMsg == "") return Ok(result);
       return BadRequest(errMsg);
     }
