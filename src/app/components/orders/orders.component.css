@@ -8,6 +8,10 @@ td
   font-size: smaller;
 }
 
+.mat-cell {
+  padding: 15px 15px 15px 0px;
+}
+
 tr
 {
   cursor: pointer;

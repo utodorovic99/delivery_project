@@ -130,5 +130,29 @@ namespace DeliveryService.Controllers
       if (errMsg == "") return new PrimitiveResponseDTO("", "string");
       return BadRequest(errMsg);
     }
+
+    //Get all products
+    [HttpGet]
+    [Route("api/[controller]/products")]
+    [Authorize(Roles = "Administrator")]
+    public ActionResult<List<ProductDTO>>Products()
+    {
+      var errMsg = "";
+      var result = _transistentRegisterService.GetAllProducts(out errMsg);
+      if (errMsg == "") return result;
+      return BadRequest(errMsg);
+    }
+
+    //Get all product ingredients
+    [HttpGet]
+    [Route("api/[controller]/products/ingredients")]
+    [Authorize(Roles = "Administrator")]
+    public ActionResult<List<string>> ProductIngredients()
+    {
+      var errMsg = "";
+      var result = _transistentRegisterService.GetAllProductIngredients(out errMsg);
+      if (errMsg == "") return Ok(result);
+      return BadRequest(errMsg);
+    }
   }
 }

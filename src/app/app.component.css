@@ -9,3 +9,16 @@
     background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
 
     }
+
+    h1 
+    { 
+        color: white; 
+        font-family: 'Lucida Handwriting'; 
+        font-size: 45px; 
+        font-weight: normal; 
+        line-height: 48px; 
+        margin: 0; 
+        padding-top: 6%;
+        padding-left: 4%;
+        text-align: center;
+    }

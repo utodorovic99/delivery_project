@@ -9,8 +9,9 @@
             <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Administrator'"></app-menu>
             <div class="row" [ngSwitch]="SPVisualState">
                 
-                <div *ngSwitchCase="'Home'">
-                    <h1>Home content</h1>
+                <div *ngSwitchCase="'Home'" style="align-items: center;" >
+                    <h1>Welcome to delivery service!</h1>
+                    <img style="width: max-content; height: max-content; padding-top: 8%;" src="assets\Images\home_page_img.png">
                 </div>
 
                 <div *ngSwitchCase="'Profile'">
@@ -18,12 +19,16 @@
                 </div>
 
                 <div *ngSwitchCase="'Users'">
-                    <h1>Users content</h1>
+                    <app-users></app-users>
                 </div>
 
                 <div *ngSwitchCase="'Orders'">
                    <app-orders></app-orders>
                 </div>
+
+                <div *ngSwitchCase="'Products'">
+                    <app-products></app-products>
+                 </div>
 
             </div>
         </div>

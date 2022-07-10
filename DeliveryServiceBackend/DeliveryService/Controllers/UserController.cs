@@ -39,7 +39,7 @@ namespace DeliveryService.Controllers
       if (!_transistentUserService.TryRegister(regReq, out errStr))
         return BadRequest(errStr);
  
-        return "";           
+        return Ok("");           
     }
 
     //User login
@@ -72,57 +72,63 @@ namespace DeliveryService.Controllers
       else
         passStatus = "F";
 
-      return new  PrimitiveResponseDTO(errStr+passStatus, "string");
+      return Ok(new  PrimitiveResponseDTO(errStr+passStatus, "string"));
     }
 
     //Read all users
     [HttpGet]
     [Route("api/[controller]")]
     [Authorize(Roles = "Administrator")]
-    public  List<UserDTO> GetAllUsers()
+    public ActionResult<List<UserDTO>> GetAllUsers()
     {
-      return _transistentUserService.GetAll();
+      return Ok(_transistentUserService.GetAll());
     }
 
     //Get personal profile data
     [HttpGet]
     [Route("api/[controller]/{username}/profile")]
-    public UserDTO Profile([System.Web.Http.FromUri] string username)
+    public ActionResult<UserDTO> Profile([System.Web.Http.FromUri] string username)
     {
-      return _transistentUserService.GetByUsername(username);
+      return Ok(_transistentUserService.GetByUsername(username));
     }
 
     //Accept registration
     [HttpPost]
     [Route("api/[controller]/{username}/accept")]
     [Authorize(Roles = "Administrator")]
-    public string Accept([System.Web.Http.FromUri] string username)
+    public ActionResult<PrimitiveResponseDTO> Accept([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Confirmed, out errStr);
-      return errStr;
+      if (errStr != "") return BadRequest(new PrimitiveResponseDTO(errStr, "string"));
+
+      return Ok(new PrimitiveResponseDTO("", "string"));
     }
 
     //Decline registration
     [HttpPost]
     [Route("api/[controller]/{username}/decline")]
     [Authorize(Roles = "Administrator")]
-    public string Decline([System.Web.Http.FromUri] string username)
+    public ActionResult<PrimitiveResponseDTO> Decline([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Rejected, out errStr);
-      return errStr;
+      if (errStr != "") return BadRequest(new PrimitiveResponseDTO(errStr, "string"));
+
+      return Ok(new PrimitiveResponseDTO("", "string"));
     }
 
     //Set registration on pending, wait to be verified
     [HttpPost]
     [Route("api/[controller]/{username}/pending")]
     [Authorize(Roles = "Administrator")]
-    public string Pending([System.Web.Http.FromUri] string username)
+    public ActionResult<PrimitiveResponseDTO> Pending([System.Web.Http.FromUri] string username)
     {
       var errStr = "";
       _transistentUserService.SetState(username, EUserState.Pending, out errStr);
-      return errStr;
+      if (errStr != "") return BadRequest(new PrimitiveResponseDTO(errStr, "string"));
+
+      return Ok(new PrimitiveResponseDTO("", "string"));
     }
 
   }

@@ -21,5 +21,9 @@ namespace DeliveryService.Services.Interfaces
     public string AcceptOrder(int orderId, string deliverymanUsername, out string errStr);
 
     public bool CreateProduct(ProductDTO product, out string errMsg);
+
+    public List<ProductDTO> GetAllProducts(out string errMsg);
+
+    public List<string> GetAllProductIngredients(out string errMsg);
   }
 }

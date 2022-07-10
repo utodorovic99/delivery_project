@@ -231,5 +231,39 @@ namespace DeliveryService.Services.Impl
       }
       return outVal;
     }
+
+    public List<ProductDTO> GetAllProducts(out string errMsg)
+    {
+      errMsg = "";
+      List<ProductDTO> products = new List<ProductDTO>();
+      AttachIngredientsToProducts(ref products);
+      return products;
+    }
+
+    private void AttachIngredientsToProducts(ref List<ProductDTO> products)
+    {
+      
+      var productsFull = _dbContext.Products.ToList();                       //With ID
+      products = _mapper.Map<List<ProductDTO>>(_dbContext.Products.ToList());//WithoutID
+
+      productsFull.OrderBy(x => x.Name);  //Align
+      products.OrderBy(x => x.Name);
+
+      List<Ingredient> ingredients = _dbContext.Ingredients.ToList(); //Get all ingredients (few of them)
+      List<ProductDefiniton> definitions = null;
+      for(int prodloc=0; prodloc<products.Count();++ prodloc)
+      {
+        definitions = _dbContext.ProductDefinitions.Where(x => x.ProductId.Equals(productsFull[prodloc].Id)).ToList();  //Get all definitions for curr. prod.
+        foreach (var definition in definitions)                                                                         //Get ingredient name for each
+          products[prodloc].Ingredients.Add(ingredients.FirstOrDefault(x=>x.Id.Equals(definition.IngredientId)).Name);  //Attach
+      }
+
+    }
+
+    public List<string> GetAllProductIngredients(out string errMsg)
+    {
+      errMsg = "";
+      return _dbContext.Ingredients.Select(x => x.Name).ToList();
+    }
   }
 }

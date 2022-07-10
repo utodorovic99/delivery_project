@@ -9,9 +9,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule} from '@angular/material/dialog';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MenuComponent } from './components/menu/menu.component';
-import {MatTableModule} from '@angular/material/table'
-import { DataSource } from '@angular/cdk/table';
-import { OrdersComponent } from './components/orders/orders.component'
+import { MatTableModule} from '@angular/material/table'
+import {MatPaginatorModule} from '@angular/material/paginator'
+
+import { OrdersComponent } from './components/orders/orders.component';
+import { UsersComponent } from './components/users/users.component';
+import { ProductsComponent } from './components/products/products.component'
 
 @NgModule({
   declarations: [
@@ -20,6 +23,8 @@ import { OrdersComponent } from './components/orders/orders.component'
     ProfileComponent,
     MenuComponent,
     OrdersComponent,
+    UsersComponent,
+    ProductsComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +33,8 @@ import { OrdersComponent } from './components/orders/orders.component'
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatTableModule,   
+    MatTableModule, 
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,18 @@
+table {
+  width: 100%;
+}
+
+td
+{
+vertical-align: top;
+font-size: smaller;
+}
+
+.mat-cell {
+padding: 15px 15px 15px 0px;
+}
+
+tr
+{
+cursor: pointer;
+}

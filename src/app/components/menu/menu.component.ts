@@ -36,4 +36,14 @@ export class MenuComponent implements OnInit {
     this.SPVisualState_changedEvent.emit("Orders");
   }
 
+  renderHomeView()
+  {
+    this.SPVisualState_changedEvent.emit("Home");
+  }
+
+  renderProductsView()
+  {
+    this.SPVisualState_changedEvent.emit("Products");
+  }
+
 }

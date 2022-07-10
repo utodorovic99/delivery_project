@@ -2,7 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from '../../environments/environment';
-import { Order } from '../components/orders/orders.component';
+import { Order } from '../models/order';
+import { Product } from '../models/product';
 import { OrderItem } from '../models/orderItem';
 
 @Injectable({
@@ -23,13 +24,25 @@ export class ProductService {
     return http.get<Array<Order>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, {headers: this.headers}); 
   }
 
-  //[Route("api/[controller]/orders/{orderId}/items")]
   public getOrderItemsFor(http:HttpClient, orderId:string):Observable<number | Array<OrderItem>>
   {
     let serviceUrl="orders";
-    let subService ="items";
     return http.get<Array<OrderItem>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${orderId}/items`, {headers: this.headers}); 
   }
+
+  public getAllProducts(http:HttpClient):Observable<number | Array<Product>>
+  {
+    let serviceUrl="products";
+    return http.get<Array<Product>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, {headers: this.headers}); 
+  }
+
+  public getAllIngredients(http:HttpClient):Observable<number | Array<string>>
+  {
+    let serviceUrl="products";
+    let subService ="ingredients";
+    return http.get<Array<string>>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}`, {headers: this.headers}); 
+  }
+
 }
 
 
