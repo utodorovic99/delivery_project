@@ -3,7 +3,7 @@
       <div class="col-lg-4">
         <div class="card mb-4">
           <div class="card-body text-center">
-            <img src={{img_url}} alt="profile image"
+            <img [src]="img_url" alt="profile image"
               class="rounded-circle img-fluid" style="width: 150px; background-color: #6a11cb;">
             <h5 class="my-3">{{name}} {{surname}}</h5>
             <p class="text-muted mb-1">{{type}}</p>
@@ -83,10 +83,10 @@
                   <p class="mb-0">Type</p>
                 </div>
                 <div class="col-sm-9">
-                    <select id="type" value ="[(ngModel)]='type'" class="muted mb-0" disabled="true">
+                    <select id="type" value ="[(ngModel)]='type'" selectedIndex={{typeIdx}} class="muted mb-0" disabled="true">
                         <option value="admin">Administrator</option>
                         <option value="delivery">Deliveryman</option>
-                        <option value="user">Consumer</option>
+                        <option value="consumer">Consumer</option>
                     </select>
                 </div>
               </div>

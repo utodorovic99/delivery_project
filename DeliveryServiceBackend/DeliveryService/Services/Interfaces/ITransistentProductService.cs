@@ -34,5 +34,7 @@ namespace DeliveryService.Services.Interfaces
 
     public bool IsOrderAvailable(int orderId, out string errMsg);
 
+    public double GetDeliveryFee();
+
   }
 }

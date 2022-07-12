@@ -1,4 +1,4 @@
-<table >
+<table>
     <tr>
       <td id="#productsTable" style="width: 70%;">
         <mat-table [dataSource]="dataSourceProducts" class="mat-elevation-z8 demo-table" style="background-color: #4ECCA3;">          
@@ -19,12 +19,12 @@
       
            
           <tr mat-header-row *matHeaderRowDef="displayedColumnsProducts"></tr>
-          <tr mat-row *matRowDef="let rowProduct; columns: displayedColumnsProducts;"></tr>
+          <tr  (click) = "tableProductsRowClick(rowProduct)" mat-row *matRowDef="let rowProduct; columns: displayedColumnsProducts;"></tr>
         </mat-table>
         <mat-paginator #productPaginator="matPaginator" [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons pag></mat-paginator>
       </td>
 
-      <td style="width: 30%;">
+      <td *ngIf="RenderNewProduct==true" style="width: 30%;">
         <table style="background-color: #a6b2ebff; vertical-align: top;">
           <th class="mat-header-cell">New Product </th>
           <tr>
@@ -85,7 +85,48 @@
 
         </table>
       </td>
-      
+
+      <td *ngIf="!RenderNewProduct" style="background-color: white;">
+        <mat-table id="#orderItemsTable" [dataSource]="dataSourceOrderItems" class="mat-elevation-z8" style="background-color: #a6b2ebff;">                  
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.name}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef> Quantity </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.quantity}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="unit price">
+            <th mat-header-cell *matHeaderCellDef> Unit Price </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.unitPrice}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="total item price">
+            <th mat-header-cell *matHeaderCellDef> Total Item Price </th>
+            <td mat-cell *matCellDef="let elementOrderItem"> {{elementOrderItem.totalItemPrice}} </td>
+          </ng-container>
+            
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderItems"></tr>
+          <tr  (click) = "tableItemsRowClick(rowItem)" mat-row *matRowDef="let rowItem; columns: displayedColumnsOrderItems;"></tr>
+        </mat-table>
+        <mat-paginator #orderItemsPaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons pag></mat-paginator>
+        
+        <button [disabled]="!submitAvailable" (click)="tryOrderSubmit()" class="btn btn-success" style="font-size: larger; width: 30%;">Submit</button>
+        <div style="float: left;width: 40%">
+          <button (click)="tryAddToCart()" class="btn btn-primary" style="float: right; font-size:larger; width: 75%;">Add</button>
+          <input type="number" id="units" style="width: 25%; height: 35px; float: left;" min="1" max="9" [(ngModel)]="unitsNum">
+        </div>
+        <button (click)="tryRemoveFromCart()" class="btn btn-danger"  style="font-size: larger; float: right;width: 30%">Remove</button>
+        <div style="width: 100%; background:#a6b2ebff;">
+          <label for="totalOrderPrice"><strong><u>TOTAL PRICE: </u></strong></label>
+          <input  style="float: right;" id="totalOrderPrice" type="text" [(ngModel)]="totalOrderPrice" readonly>
+          </div>
+        <div style="width: 100%; background:#a6b2ebff;">
+        <p style="font-size:small"><u><strong>Note:</strong></u><i>Delivery fee costs: <u>{{deliveryFee}}</u></i></p>
+        </div>
+      </td>  
     </tr>
   </table>
   

@@ -142,12 +142,10 @@ INSERT INTO dbo.Users VALUES('ugljesa_dummy6_consumer', 'dummy_mail_6@gmail.com'
 -----------------------------------------------------------------------------------------------
 CREATE TABLE dbo.OrdersTmp(Id int, Consumer varchar(35), Deliveryman varchar(35), Address varchar(35), Comment varchar(50), Status varchar(1), TimeExpected varchar(20));
 INSERT INTO dbo.OrdersTmp VALUES (0, 'ugljesa_dummy5_consumer', '',						    'Dummy Address1',  'Dummy Comment 1', 'a', '');
-INSERT INTO dbo.OrdersTmp VALUES (1, 'ugljesa_dummy5_consumer', '',                         'Dummy Address2',  'Dummy Comment 2', 'a', '');
 INSERT INTO dbo.OrdersTmp VALUES (2, 'ugljesa_dummy5_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address3',  'Dummy Comment 3', 'c', '10/07/2022 08:45');
 INSERT INTO dbo.OrdersTmp VALUES (3, 'ugljesa_dummy5_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address4',  'Dummy Comment 4', 'c', '09/07/2022 09:49');
 INSERT INTO dbo.OrdersTmp VALUES (4, 'ugljesa_dummy5_consumer', '',                         'Dummy Address5',  'Dummy Comment 5', 'a', '');
 INSERT INTO dbo.OrdersTmp VALUES (5, 'ugljesa_dummy6_consumer', '',                         'Dummy Address6',  'Dummy Comment 6', 'a', '');
-INSERT INTO dbo.OrdersTmp VALUES (6, 'ugljesa_dummy6_consumer', '',                         'Dummy Address7',  'Dummy Comment 7', 'a', '');
 INSERT INTO dbo.OrdersTmp VALUES (7, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address8',  'Dummy Comment 8', 'c', '08/07/2022 11:22');
 INSERT INTO dbo.OrdersTmp VALUES (8, 'ugljesa_dummy6_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address9',  'Dummy Comment 9', 'c', '07/07/2022 22:35');
 INSERT INTO dbo.OrdersTmp VALUES (9, 'ugljesa_dummy6_consumer', '',                         'Dummy Address10', 'Dummy Comment 10','a', '');
@@ -167,9 +165,6 @@ INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = '
 INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
 INSERT INTO dbo.OrderItemsTmp VALUES (0, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
 
-INSERT INTO dbo.OrderItemsTmp VALUES (1, (SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 3);
-INSERT INTO dbo.OrderItemsTmp VALUES (1, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 1);
-
 INSERT INTO dbo.OrderItemsTmp VALUES (2, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 3);
 INSERT INTO dbo.OrderItemsTmp VALUES (2, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
 
@@ -181,9 +176,6 @@ INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = '
 INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);
 INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Cold Combo'), 2);
 INSERT INTO dbo.OrderItemsTmp VALUES (5, (SELECT Id FROM Products WHERE Name = 'Balkan XXL Experience'), 2);
-
-INSERT INTO dbo.OrderItemsTmp VALUES (6, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 1);
-INSERT INTO dbo.OrderItemsTmp VALUES (6, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 2);
 
 INSERT INTO dbo.OrderItemsTmp VALUES (7, (SELECT Id FROM Products WHERE Name = 'Black Forest Ham'), 4);
 INSERT INTO dbo.OrderItemsTmp VALUES (7, (SELECT Id FROM Products WHERE Name = 'Mediterranean Wave'), 3);

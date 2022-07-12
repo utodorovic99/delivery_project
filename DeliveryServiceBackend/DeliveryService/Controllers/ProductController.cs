@@ -188,5 +188,13 @@ namespace DeliveryService.Controllers
       if (errMsg == "") return Ok(result);
       return BadRequest(errMsg);
     }
+
+    //Get all delivery fee
+    [HttpGet]
+    [Route("api/[controller]/orders/delivery-fee")]
+    public ActionResult<PrimitiveResponseDTO> GetDeliveryFee()
+    {
+       return Ok(new PrimitiveResponseDTO(_transistentProductsService.GetDeliveryFee().ToString(), "double"));
+    }
   }
 }

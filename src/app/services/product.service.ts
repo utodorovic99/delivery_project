@@ -89,6 +89,13 @@ export class ProductService {
     return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}/${orderId}`, '', {headers: this.headers}); 
   }
 
+
+  public getDeliveryFee(http:HttpClient):Observable<number | PrimitiveResponse>
+  {
+    let serviceUrl="orders";
+    let subserviceUrl = 'delivery-fee'
+    return http.get<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subserviceUrl}`, {headers: this.headers});  
+  }
 }
 
 

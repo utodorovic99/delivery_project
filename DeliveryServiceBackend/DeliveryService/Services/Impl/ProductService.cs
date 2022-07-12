@@ -49,9 +49,9 @@ namespace DeliveryService.Services.Impl
     {
       var now = DateTime.Now;
       Random r = new Random();
-      now.AddMinutes(r.Next(1, 10));
-      now.AddMinutes(r.Next(0, 60));
-      return $"{(now.Day<10 ? "0" : "")}{now.Day}/{(now.Month < 10 ? "0" : "")}{now.Month}/{now.Year} {(now.Hour < 10 ? "0" : "")}{now.Hour}:{(now.Minute < 10 ? "0" : "")}{now.Minute}";
+      now = now.AddMinutes(r.Next(1, 2));
+      now = now.AddSeconds(r.Next(30, 60));
+      return $"{(now.Day<10 ? "0" : "")}{now.Day}/{(now.Month < 10 ? "0" : "")}{now.Month}/{now.Year} {(now.Hour < 10 ? "0" : "")}{now.Hour}:{(now.Minute < 10 ? "0" : "")}{now.Minute}:{(now.Second < 10 ? "0" : "")}{now.Second}";
     }
 
     public List<OrderDTO> GetAllOrders()
@@ -325,6 +325,11 @@ namespace DeliveryService.Services.Impl
       if (order == null) { errMsg = "Order not found;"; return false; }
 
       return (order.Deliveryman == "" || order.Deliveryman == null);
+    }
+
+    public double GetDeliveryFee()
+    {
+      return _delivery_fee;
     }
   }
 }

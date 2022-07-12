@@ -35,7 +35,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
  verifyWindowVisible=false;
  selectedUserUsername="";
  selectedUserRow="";
-  constructor(private http: HttpClient,private userService:UserService, private sanitizer: DomSanitizer) { }
+constructor(private http: HttpClient,private userService:UserService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void 
   {
@@ -48,9 +48,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
           var urlPass;
           for(let user in data as unknown as UserView[])
           {     
-            if(data[user]['imageRaw']!=='AA==')
+            if(data[user]['imageRaw']!=='AA==' && data[user]['imageRaw'].length>0)
             {
-              console.log(data[user]['imageRaw']);
               url = 'data:image/png;base64,' + data[user]['imageRaw'];
               urlPass= this.sanitizer.bypassSecurityTrustUrl(url);
             }

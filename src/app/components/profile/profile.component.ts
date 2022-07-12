@@ -4,6 +4,7 @@ import {HttpClient, HttpEventType } from '@angular/common/http';
 import { User } from '../../models/user';
 import { UserUpdateRequest } from '../../models/userUpdateRequest';
 import { PrimitiveResponse } from '../../models/primitiveResponse';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
@@ -22,11 +23,12 @@ export class ProfileComponent implements OnInit {
   public birthdate   ="";
   public address     ="";
   public type        ="";
+  public typeIdx = 1;
   public img_url='assets\\Images\\select_image.png';
   public errTxt="";
   public dissabledFlag;
   
-  constructor(private http: HttpClient, private userService:UserService) { }
+  constructor(private http: HttpClient, private userService:UserService, private sanitizer: DomSanitizer) { }
   ngOnInit(): void {
 
     this.dissabledFlag=true;
@@ -107,12 +109,19 @@ export class ProfileComponent implements OnInit {
           this.surname     =(data as User)['surname'];
           this.birthdate   =(data as User)['birthdate'];
           this.address     =(data as User)['address'];
-          this.type        =(data as User)['type'];
-          if((data as User).ImageRaw  == undefined)
+          this.type        = this.mapTypeValueToStr((data as User)['type']);
+          this.typeIdx     = this.mapTypeToIndex((data as User)['type']);
+
+          var url;
+          var urlPass;
+          if((data as User)['imageRaw']!=='AA==' && (data as User)['imageRaw'].length>0)
           {
-            this.img_url='assets\\Images\\select_image.png';
+            url = 'data:image/png;base64,' + (data as User)['imageRaw'];
+            urlPass= this.sanitizer.bypassSecurityTrustUrl(url);
           }
+          else urlPass = 'assets\\Images\\select_image.png'
           
+          this.img_url= urlPass ;
         },
 
         error: (error)=>
@@ -123,6 +132,28 @@ export class ProfileComponent implements OnInit {
               this.errTxt="Errors: Service is offline";
         }
       }); 
+    }
+  }
+
+  private mapTypeValueToStr(type:string)
+  {
+    switch(type)
+    {
+      case "administrator": { return "admin";}
+      case "deliveryman":   { return "delivery";}
+      case "consumer":      { return "consumer";}
+      default:              {return "unknown";}
+    }
+  }
+
+  private mapTypeToIndex(type:string):number
+  {
+    switch(type)
+    {
+      case "administrator": { return 0;}
+      case "deliveryman":   { return 1;}
+      case "consumer":      { return 2;}
+      default:              {return -1;}
     }
   }
 }

@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CountdownComponent } from 'ngx-countdown';
 
 @Component({
   selector: 'app-menu',
@@ -9,10 +10,15 @@ export class MenuComponent implements OnInit {
   @Output() public SPVisualContext_changedEvent = new EventEmitter();
   @Output() public SPVisualState_changedEvent = new EventEmitter();
   @Input() public roleContext;
+  @Input() public expectedDeliveryMoment;
+  @ViewChild('cd', { static: false }) private countdown!: CountdownComponent;
+  
+
   constructor() { }
   
   ngOnInit(): void {
     this.SPVisualState_changedEvent.emit('Home');
+    this.countdown.begin();
   }
 
   logout()
@@ -69,5 +75,10 @@ export class MenuComponent implements OnInit {
   renderNewCurrentOrderView()
   {
     this.SPVisualState_changedEvent.emit("New-Current");
+  }
+
+  handleEvent($event)
+  {
+    this.countdown.begin();
   }
 }

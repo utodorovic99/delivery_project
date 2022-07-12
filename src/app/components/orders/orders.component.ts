@@ -5,6 +5,7 @@ import { ProductService } from '../../services/product.service';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { Order } from 'src/app/models/order';
+import { PrimitiveResponse } from 'src/app/models/primitiveResponse';
 
 export interface OrderView{
   id:          number;
@@ -39,6 +40,7 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
 
   @Input() ordersContext='none';
   @Output() public OrdersComponentHidden_changedEvent = new EventEmitter();
+  @Output() public ExpectedDeliveryTime_changedEvent = new EventEmitter();
 
   displayedColumnsOrders:     string[] = ['id', 'consumer',  'deliveryman', 'price', 'address', 'comment', 'status'];
   displayedColumnsOrderItems: string[] = ['name', 'quantity',  'unit price', 'total item price']
@@ -47,7 +49,7 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
   dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
 
   deliveryFee=0;
-  controlHidden=false;
+  controlHidden=false;    
   acceptAvailable=false;
   private seledOrderId;
 
@@ -315,6 +317,15 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
           this.ordersContext='current';
           this.getCurrentOrder();
           this.PlotOrderItems('');
+
+          //Till delivery
+          let targetMoment = new Date((data as PrimitiveResponse)['value']);
+          let now = new Date();
+          targetMoment.setHours(now.getHours());
+          targetMoment.setDate(now.getDate());
+          targetMoment.setMonth(now.getMonth());
+          targetMoment.setFullYear(now.getFullYear());
+          this.ExpectedDeliveryTime_changedEvent.emit((targetMoment.getTime()-now.getTime())/1000);
         },
 
         error: (error)=>

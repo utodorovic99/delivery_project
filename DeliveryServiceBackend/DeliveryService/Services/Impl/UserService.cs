@@ -44,13 +44,15 @@ namespace DeliveryService.Services.Impl
       string imgName="";
       if (regReq.ImageRaw.Length > 0 && !HandleStoreUserImage(regReq, out imgName)) imgName = "";
 
-      _dbContext.Users.Add
-      (
-        new User(regReq.Email, ExecuteEncyprion(regReq.Password), regReq.Username, regReq.Name, regReq.Surname,
-                 regReq.Birthdate, regReq.Address, MapUserTypeToCode(regReq.Type), imgName)
-      );
+      var type = MapUserTypeToCode(regReq.Type);
+      var newUser = new User(regReq.Email, ExecuteEncyprion(regReq.Password), regReq.Username, regReq.Name, regReq.Surname,
+                 regReq.Birthdate, regReq.Address, type, imgName);
+
+      if (type == 'c') newUser.State = (int)EUserState.Confirmed;
+
+      _dbContext.Users.Add( newUser);
       _dbContext.SaveChanges();
-      return true;
+     return true;
     }
 
     private string  ExecuteEncyprion(string plainPassword)
@@ -83,9 +85,9 @@ namespace DeliveryService.Services.Impl
       List<Claim> claims = new List<Claim>();
       switch( MapUserCodeToType(usr.Type))
       {
-        case "administrator": { claims.Add(new Claim(ClaimTypes.Role, "Administrator"));        break; }
-        case "deliveryman":   { claims.Add(new Claim(ClaimTypes.Role, "Deliveryman"));          break; }
-        case "consumer":      { claims.Add(new Claim(ClaimTypes.Role, "Consumer"));             break; }
+        case "admin":     { claims.Add(new Claim(ClaimTypes.Role, "Administrator"));        break; }
+        case "delivery":  { claims.Add(new Claim(ClaimTypes.Role, "Deliveryman"));          break; }
+        case "consumer":  { claims.Add(new Claim(ClaimTypes.Role, "Consumer"));             break; }
       }
       claims.Add(new Claim("username", usr.Username));
 
@@ -107,9 +109,9 @@ namespace DeliveryService.Services.Impl
       char retVal = 'u';
       switch(type.ToLower())
       {
-        case "administrator": { retVal = 'a'; break; }
-        case "deliveryman":   { retVal = 'd'; break; }
-        case "consumer":      { retVal = 'c'; break; }
+        case "admin":     { retVal = 'a'; break; }
+        case "delivery":  { retVal = 'd'; break; }
+        case "consumer":  { retVal = 'c'; break; }
       }
       return retVal;
     }
@@ -119,8 +121,8 @@ namespace DeliveryService.Services.Impl
       string retVal = "unknown";
       switch (code.ToString().ToLower().First())
       {
-        case 'a': { retVal = "administrator"; break; }
-        case 'd': { retVal = "deliveryman"; break; }
+        case 'a': { retVal = "admin"; break; }
+        case 'd': { retVal = "delivery"; break; }
         case 'c': { retVal = "consumer"; break; }
       }
       return retVal;
@@ -205,19 +207,23 @@ namespace DeliveryService.Services.Impl
     public List<UserDTO> GetAll()
     {
       var users= _mapper.Map<List<UserDTO>>(_dbContext.Users.ToList());
-      string imgName = "";
-      var fullPath = "";
       foreach (var user in users)
-      {
-        imgName = _dbContext.Users.Find(user.Username).ImageName;
-        fullPath =  Path.Combine(_img_repo_base_path, imgName);
-        if (System.IO.File.Exists(fullPath))
-        {
-          user.ImageRaw = System.IO.File.ReadAllBytes(fullPath);
-        }      
-      }
+        user.ImageRaw = LoadUserImage(user);    
 
       return users;
+    }
+
+    private byte[] LoadUserImage(UserDTO user)
+    {
+      string imgName = "";
+      var fullPath = "";
+      imgName = _dbContext.Users.Find(user.Username).ImageName;
+      fullPath = Path.Combine(_img_repo_base_path, imgName);
+      if (System.IO.File.Exists(fullPath))
+      {
+         return System.IO.File.ReadAllBytes(fullPath);
+      }
+      return new byte[0];
     }
 
     private bool HandleUpdateUserImage(UserUpdateRequestDTO updateReq, out string imgName)
@@ -263,11 +269,15 @@ namespace DeliveryService.Services.Impl
 
     public UserDTO GetByUsername(string username)
     {
-      return _mapper.Map<UserDTO>(_dbContext.Users.Find(username));
+      var user=_mapper.Map<UserDTO>(_dbContext.Users.Find(username));
+      user.ImageRaw = LoadUserImage(user);
+      return user;
     }
     public UserDTO GetByEmail(string email)
     {
-      return _mapper.Map<UserDTO>(_dbContext.Users.FirstOrDefault(x=>x.Email.Equals(email)));
+      var user =_mapper.Map<UserDTO>(_dbContext.Users.FirstOrDefault(x=>x.Email.Equals(email)));
+      user.ImageRaw = LoadUserImage(user);
+      return user;
     }
 
     public bool SetState(string username, EUserState state, out string errMsg)

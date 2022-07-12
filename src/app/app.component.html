@@ -27,14 +27,15 @@
                 </div>
 
                 <div *ngSwitchCase="'Products'">
-                    <app-products></app-products>
+                    <app-products [RenderNewProduct]="true"></app-products>
                  </div>
 
             </div>
         </div>
 
         <div *ngSwitchCase="'Deliveryman'"> <!--Deliveryman environment-->
-            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Deliveryman'"></app-menu>
+            <app-menu (SPVisualContext_changedEvent)  ='OnSPVisualContext_changed($event)' (SPVisualState_changedEvent)  ='OnSPVisualState_changed($event)' [roleContext] = "'Deliveryman'"
+                       [expectedDeliveryMoment] = "ExpectedDeliveryTime"></app-menu>
             <div class="row" [ngSwitch]="SPVisualState">
                 
                 <div *ngSwitchCase="'Home'" style="align-items: center;" >
@@ -47,7 +48,7 @@
                 </div>
                 
                 <div *ngSwitchCase="'OrdersAvailable'">
-                    <app-orders [ordersContext] = "'available'"></app-orders>
+                    <app-orders [ordersContext] = "'available'" (ExpectedDeliveryTime_changedEvent) = 'OnExpectedDeliveryTime_changed($event)'></app-orders>
                  </div>
  
                 <div *ngSwitchCase="'OrdersCompleted'">
@@ -80,7 +81,7 @@
               
                 <div *ngSwitchCase="'New-Current'">  
                     <app-orders (OrdersComponentHidden_changedEvent)  ='OnOrdersComponentHidden_changed($event)' [ordersContext] = "'new-current'"></app-orders>
-                    <app-products *ngIf="OrdersComponentHidden"></app-products>            
+                    <app-products *ngIf="OrdersComponentHidden" [RenderNewProduct]="false"></app-products>            
                 </div>
 
             </div>

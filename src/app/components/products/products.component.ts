@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { first } from 'rxjs';
+import { PrimitiveResponse } from 'src/app/models/primitiveResponse';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
+
 
 export interface ProductView{
   name         :string ;
@@ -16,6 +18,16 @@ export interface ProductItemView{
   name         :string ;
 }
 
+export interface OrderItemView{
+
+  name:        string;
+  quantity:    number;
+  unitPrice :  number;
+  totalItemPrice : number;
+}
+
+const ELEMENT_DATA_ORDER_ITEMS: OrderItemView[] = [];
+
 const ELEMENT_DATA_PRODUCTS: ProductView[] = [];
 const ELEMENT_DATA_SELED_INGREDIENTS: ProductItemView[] = [];
 
@@ -25,16 +37,28 @@ const ELEMENT_DATA_SELED_INGREDIENTS: ProductItemView[] = [];
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
-  @ViewChildren(MatTable)tables!:QueryList<MatTable<ProductView|ProductItemView>>;
+  @ViewChildren(MatTable)tables!:QueryList<MatTable<ProductView|ProductItemView|OrderItemView>>;
   @ViewChild(MatPaginator) productPaginator!: MatPaginator;
+  
+  @Input() RenderNewProduct;
+  
   displayedColumnsProducts: string[] = ['name',     'price',     'ingredients'];
   displayedColumnsSeledIngredients: string[]=['name'];
+  displayedColumnsOrderItems: string[] = ['name', 'quantity',  'unit price', 'total item price']
   
   dataSourceProducts = new MatTableDataSource<ProductView>(ELEMENT_DATA_PRODUCTS);
   dataSourceSelectedIngredients = new MatTableDataSource<ProductItemView>(ELEMENT_DATA_SELED_INGREDIENTS);
+  dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
 
   public selectedIngredient;      //For dropdown
-  public selectedTableIngredient  //For table
+  public selectedTableIngredient;  //For table
+  public selectedProduct;
+  public selectedItem;
+
+  submitAvailable=false;
+  unitsNum=1;
+  deliveryFee=0;
+  totalOrderPrice;
 
   public name;
   public price;
@@ -44,7 +68,7 @@ export class ProductsComponent implements OnInit {
   constructor(private http: HttpClient,private productService:ProductService) { }
 
   ngOnInit(): void {
-    
+    ELEMENT_DATA_ORDER_ITEMS.splice(0);
     this.LoadProducts();
 
       this.productService.getAllIngredients(this.http).subscribe(
@@ -55,6 +79,23 @@ export class ProductsComponent implements OnInit {
               this.ingredients.push(data[ingredient]);
 
               this.selectedIngredient=this.ingredients[0];
+          },
+  
+          error: (error)=>
+          {
+            //
+          }
+        }); 
+
+
+        this.LoadProducts();
+
+      this.productService.getDeliveryFee(this.http).subscribe(
+        {
+          next: (data)=>
+          {
+            this.deliveryFee=(data as PrimitiveResponse)['value'] ;
+            this.totalOrderPrice = this.deliveryFee;
           },
   
           error: (error)=>
@@ -226,6 +267,63 @@ export class ProductsComponent implements OnInit {
 
     return errTxt;
   }
+  
+  tableProductsRowClick(selectedProduct)
+  {
+    this.selectedProduct = selectedProduct;
+  }
 
+  tableItemsRowClick(rowItem)
+  {
+    this.selectedItem = rowItem;
+  }
+
+  tryOrderSubmit()
+  {
+
+  }
+
+  tryAddToCart()
+  {
+    let itemPrice=parseFloat(this.unitsNum.toString()) * parseFloat(this.selectedProduct['price']);
+    ELEMENT_DATA_ORDER_ITEMS.push({name:this.selectedProduct['name'], quantity:this.unitsNum as number,  
+    unitPrice:this.selectedProduct['price'] as number, totalItemPrice: itemPrice});
+    this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
+    this.tables.toArray()[1].renderRows();
+    this.totalOrderPrice= parseFloat(this.totalOrderPrice) + parseFloat(itemPrice.toString());
+    this.unitsNum=1;
+  }
+
+  tryRemoveFromCart()
+  {
+    if(this.selectedItem===undefined) return;
+
+    let updated: OrderItemView[] =[];
+
+    let triggered = false;
+    for(let ingredient in ELEMENT_DATA_ORDER_ITEMS)
+    {
+      if(ELEMENT_DATA_ORDER_ITEMS[ingredient]['name'] == this.selectedItem['name'] && 
+           ELEMENT_DATA_ORDER_ITEMS[ingredient]['quantity'] == this.selectedItem['quantity'] &&
+           ELEMENT_DATA_ORDER_ITEMS[ingredient]['qunitPrice'] == this.selectedItem['unitPrice'] &&
+           ELEMENT_DATA_ORDER_ITEMS[ingredient]['totalItemPrice'] == this.selectedItem['totalItemPrice'] )                       
+      {
+        if(triggered)
+          updated.push(ELEMENT_DATA_ORDER_ITEMS[ingredient]);  //First instance deleted keep
+        else
+        {
+          this.totalOrderPrice= parseFloat(this.totalOrderPrice) - (parseFloat(this.selectedItem['quantity'].toString()) * parseFloat(this.selectedItem['price']));
+          triggered = true;
+        }     
+      }
+      else
+      {
+        updated.push(ELEMENT_DATA_ORDER_ITEMS[ingredient]);  
+      }
+
+      this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
+      this.tables.toArray()[1].renderRows();
+    }
+  }
 
 }
