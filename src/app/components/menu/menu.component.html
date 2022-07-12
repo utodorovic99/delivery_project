@@ -19,6 +19,9 @@
           <li class="nav-item" *ngSwitchCase="'Administrator'">
             <a class="nav-link" (click)="renderOrdersView()" style="cursor: pointer;">Orders</a>
           </li>
+          <li class="nav-item" *ngSwitchCase="'Administrator'">
+            <a class="nav-link" (click)="renderProductsView()" style="cursor: pointer;">Products</a>
+          </li>
 
           <li class="nav-item" *ngSwitchCase="'Deliveryman'">
             <a class="nav-link" (click)="renderAvailableOrdersView()" style="cursor: pointer;">Available Orders</a>
@@ -38,16 +41,19 @@
 
           <li class="nav-item" *ngSwitchCase="'Consumer'">
             <a class="nav-link" (click)="renderNewCurrentOrderView()" style="cursor: pointer;">New/Current</a>
-          </li>
-
+          </li>         
         </ul>
       </div>
   
       <div class="navbar-collapse collapse w-51 order-3 dual-collapse2">
           <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                  <button class="btn btn-outline-info my-2 my-sm-0" (click)="logout()">Logout</button>
-              </li>
+            <li class="nav-item" style="padding-right: 20px;">
+              <!--Povezati config da se kaci na event iz orders component-a-->
+              <countdown style="cursor:default;" class="btn btn-outline-info my-2 my-sm-0" *ngIf="roleContext=='Deliveryman' || roleContext=='Consumer'" [config]="{leftTime: 60}"></countdown>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-outline-info my-2 my-sm-0" (click)="logout()">Logout</button>
+            </li>
           </ul>
       </div>
     </nav>

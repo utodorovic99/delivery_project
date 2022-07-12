@@ -8,7 +8,7 @@ namespace DeliveryService.DTOs
   {
     public UserRegisterRequestDTO(string email, string password, string username, string name,
                                string surname, string birthdate, string address, string type,
-                               byte[] imageRaw):base(email, password, username, name, surname, birthdate, address, type, imageRaw) {}
+                               IFormFile imageRaw):base(email, password, username, name, surname, birthdate, address, type, imageRaw) {}
 
    
     public UserRegisterRequestDTO():base(){}

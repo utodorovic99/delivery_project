@@ -1,5 +1,5 @@
 
-<div>
+<div *ngIf="!controlHidden" >
   <table>
     <tr>
       <td style="width: 60%;">
@@ -70,7 +70,9 @@
           <tr  mat-row *matRowDef="let rowOrderItem; columns: displayedColumnsOrderItems;"></tr>
         </mat-table>
         <mat-paginator #orderItemsPaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons pag></mat-paginator>
+        <button [disabled]="!acceptAvailable" *ngIf="ordersContext == 'available'"(click)="tryOrderAccept()" class="btn btn-success" style="font-size: large; width: 100%;">Accept</button>
       </td>
+      <tr>
     </tr>
   </table>
 </div>

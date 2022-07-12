@@ -74,6 +74,11 @@ namespace DeliveryService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
 
+                    b.Property<string>("TimeExpected")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Orders", (string)null);

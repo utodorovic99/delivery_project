@@ -33,8 +33,11 @@ namespace DeliveryService.Controllers
     //User register
     [HttpPost]
     [Route("api/[controller]/register")]
-    public ActionResult<string> Register([FromBody]UserRegisterRequestDTO regReq)
+    public ActionResult<string> Register([FromForm]UserRegisterRequestDTO regReq)
     {
+     
+      IFormFile file = regReq.ImageRaw as IFormFile;
+
       string errStr = "";
       if (!_transistentUserService.TryRegister(regReq, out errStr))
         return BadRequest(errStr);

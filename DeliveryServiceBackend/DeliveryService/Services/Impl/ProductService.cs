@@ -29,7 +29,7 @@ namespace DeliveryService.Services.Impl
       { errMsg = "Invalid user type."; return $"ERR:{errMsg}"; }
 
       if(_dbContext.Orders.FirstOrDefault(x=>x.Deliveryman.Equals(deliverymanUsername) &&
-                                             x.Status.Equals('a'))!=null)
+                                             x.Status.Equals('t'))!=null)
       { errMsg = "Maximum deliveries reached."; return $"ERR:{errMsg}"; }
 
       var order = _dbContext.Orders.Find(orderId);
@@ -38,20 +38,20 @@ namespace DeliveryService.Services.Impl
 
       order.Status = 't';
       order.Deliveryman = deliverymanUsername;
+      order.TimeExpected = GenerateOrderCountdownMoment();
       _dbContext.SaveChangesAsync();
 
       errMsg = "";
-      return $"CDWN:{GenerateOrderCountdownMoment().ToShortTimeString()}";
-
+      return order.TimeExpected;
     }
 
-    private DateTime GenerateOrderCountdownMoment()
+    private string GenerateOrderCountdownMoment()
     {
       var now = DateTime.Now;
       Random r = new Random();
       now.AddMinutes(r.Next(1, 10));
       now.AddMinutes(r.Next(0, 60));
-      return now;
+      return $"{(now.Day<10 ? "0" : "")}{now.Day}/{(now.Month < 10 ? "0" : "")}{now.Month}/{now.Year} {(now.Hour < 10 ? "0" : "")}{now.Hour}:{(now.Minute < 10 ? "0" : "")}{now.Minute}";
     }
 
     public List<OrderDTO> GetAllOrders()
@@ -131,8 +131,12 @@ namespace DeliveryService.Services.Impl
           {
             if (!deliveryman.Type.ToString().Equals("d"))
             { errMsg = "Invalid user type."; return orders; }
-            orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
-                                                                                  x.Deliveryman.Equals(username)).First() });
+
+            var target = _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
+                                                                                  x.Deliveryman.Equals(username)).FirstOrDefault();
+            if(target!=null)
+              orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { target});
+
             AttachItemsToOrder(ref orders);
             return orders;
           }
@@ -141,8 +145,12 @@ namespace DeliveryService.Services.Impl
           {
             if (!deliveryman.Type.ToString().Equals("c"))
             { errMsg = "Invalid user type."; return orders; }
-            orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
-                                                                                  x.Consumer.Equals(username)).First()});
+
+            var target = _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
+                                                                                   x.Consumer.Equals(username)).FirstOrDefault();
+            if (target != null)
+              orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { target });
+
             AttachItemsToOrder(ref orders);
             return orders;
           }

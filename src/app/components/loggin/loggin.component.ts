@@ -19,6 +19,8 @@ export class LogginComponent implements OnInit {
   @Input() public SPVisualContext;
   @Output() public SPVisualContext_changedEvent = new EventEmitter();
 
+  public imgFile;
+
   public email       ="";
   public password    ="";
   public re_password ="";
@@ -103,7 +105,6 @@ export class LogginComponent implements OnInit {
 
   SubmitRegister(Register:any)
   {
-
     let errStr="";
     this.errTxt="";
     if(this.email ==""     || this.password   =="" || this.re_password=="" || this.surname    ==""||

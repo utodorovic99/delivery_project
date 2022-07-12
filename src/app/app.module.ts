@@ -15,6 +15,8 @@ import {MatPaginatorModule} from '@angular/material/paginator'
 import { OrdersComponent } from './components/orders/orders.component';
 import { UsersComponent } from './components/users/users.component';
 import { ProductsComponent } from './components/products/products.component'
+import {CountdownModule} from 'ngx-countdown'
+
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { ProductsComponent } from './components/products/products.component'
     HttpClientModule,
     BrowserAnimationsModule,
     MatTableModule, 
-    MatPaginatorModule
+    MatPaginatorModule,
+    CountdownModule
   ],
   providers: [],
   bootstrap: [AppComponent]

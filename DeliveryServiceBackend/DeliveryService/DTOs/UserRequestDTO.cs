@@ -2,7 +2,7 @@ namespace DeliveryService.DTOs
 {
   public abstract class UserRequestDTO
   {
-    protected UserRequestDTO(string email, string password, string username, string name, string surname, string birthdate, string address, string type, byte[]? imageRaw)
+    protected UserRequestDTO(string email, string password, string username, string name, string surname, string birthdate, string address, string type, IFormFile imageRaw)
     {
       Email = email;
       Password = password;
@@ -36,6 +36,6 @@ namespace DeliveryService.DTOs
     public string Birthdate { get; set; } = String.Empty;
     public string Address { get; set; } = String.Empty;
     public string Type { get; set; } = String.Empty;
-    public byte[]? ImageRaw { get; set; }
+    public IFormFile ImageRaw { get; set; }
   }
 }

@@ -4,7 +4,7 @@ namespace DeliveryService.Model
 {
   public class Order
   {
-    public Order(int id, string consumer, string deliveryman, char status, string address, string comment)
+    public Order(int id, string consumer, string deliveryman, char status, string address, string comment, string timeExpected)
     {
       Id = id;
       Consumer = consumer;
@@ -12,6 +12,7 @@ namespace DeliveryService.Model
       Status = Status;
       Address = address;
       Comment = comment;
+      TimeExpected = timeExpected;
     }
 
     public Order()
@@ -22,15 +23,18 @@ namespace DeliveryService.Model
       Status = 'u';
       Address = "";
       Comment = "";
+      TimeExpected = "";
     }
 
-    public int Id { get; set; }                             //Unique order ID
+    public int Id { get; set; }                                 //Unique order ID
     public string Consumer { get; set; }    = String.Empty;     //Cosumer ID (username) who ordered it
     public string Deliveryman { get; set; } = String.Empty;     //Deliveryman ID (null if not taken yet)
     public string Address { get; set; }
 
     public string Comment { get; set; }
     public char Status { get; set; }                            //Flag if order is available, taken or delivered
+
+    public string TimeExpected { get; set; }                    //Expected DateTime of delivery
 
   }
 }

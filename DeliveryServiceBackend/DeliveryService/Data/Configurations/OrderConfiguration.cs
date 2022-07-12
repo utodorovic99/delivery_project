@@ -21,8 +21,10 @@ namespace DeliveryService.Data.Configurations
       builder.Property(x => x.Comment).HasMaxLength(50);
       builder.Property(x => x.Consumer).HasMaxLength(35);
       builder.Property(x => x.Deliveryman).HasMaxLength(35);
+      builder.Property(x => x.TimeExpected).HasMaxLength(20);
 
       builder.Property(x => x.Deliveryman).HasDefaultValue(null);
+      builder.Property(x => x.TimeExpected).HasDefaultValue(null);
     }
   }
 }

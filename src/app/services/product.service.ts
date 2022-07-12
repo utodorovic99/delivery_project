@@ -80,6 +80,15 @@ export class ProductService {
     let body = JSON.stringify(product);
     return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}`,body, {headers: this.headers}); 
   }
+
+  public acceptOrder(http:HttpClient, orderId:string):Observable<number | PrimitiveResponse>
+  {
+    let serviceUrl="orders";
+    let subService ="accept";
+
+    return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}/${orderId}`, '', {headers: this.headers}); 
+  }
+
 }
 
 

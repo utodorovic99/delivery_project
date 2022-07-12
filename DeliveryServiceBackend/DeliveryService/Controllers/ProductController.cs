@@ -143,9 +143,13 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/accept/{orderId}")]
     [Authorize(Roles = "Deliveryman")]
-    public ActionResult<PrimitiveResponseDTO> AcceptOrder([System.Web.Http.FromUri] int orderId, [FromBody] string username)
+    public ActionResult<PrimitiveResponseDTO> AcceptOrder([System.Web.Http.FromUri] int orderId)
     {
       var errMsg = "";
+      var identity = HttpContext.User.Identity as ClaimsIdentity;
+      string username = "";
+      if (identity != null)
+        username = identity.FindFirst("username").Value;
       var result = _transistentProductsService.AcceptOrder(orderId, username ,out errMsg);
       if (errMsg == "") return new PrimitiveResponseDTO(result,"string");
       return BadRequest(errMsg);

@@ -4,7 +4,7 @@ namespace DeliveryService.DTOs
   {
     public UserUpdateRequestDTO(string email, string password, string newPassword, string username, string name,
                                string surname, string birthdate, string address, string type,
-                               byte[] imageRaw) : base(email, password, username, name, surname, birthdate, address, type, imageRaw)
+                               IFormFile imageRaw) : base(email, password, username, name, surname, birthdate, address, type, imageRaw)
     {
       this.NewPassword = newPassword;
     }

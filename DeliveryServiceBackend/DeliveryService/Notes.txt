@@ -4,3 +4,4 @@
 --Minimalni datum provjera
 --ogranicenje max priloga
 --ponistavanje prethodnih kada se saltam
+--ispisi mu da vec ima order

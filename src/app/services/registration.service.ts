@@ -20,11 +20,21 @@ export class RegistrationService {
   public registerUser(regReq:UserRegisterRequest, http:HttpClient):Observable<number | string>
   {
     let serviceUrl="register";
-    let body = JSON.stringify(regReq)
+    let body = JSON.stringify(regReq);
+
+    const fd = new FormData();
+    fd.append('email',regReq.Email);
+    fd.append('password',regReq.Password);
+    fd.append('username',regReq.Username);
+    fd.append('name',regReq.Name);
+    fd.append('surname',regReq.Surname);
+    fd.append('birthdate', regReq.Birthdate);
+    fd.append('address',regReq.Address);
+    fd.append('type',regReq.Type);
+    fd.append('imageRaw', regReq.ImageRaw, regReq.ImageRaw.name);
 
     return http.post<string>(  `${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}`, 
-                        body, 
-                        {'headers':this.headers});   
+                        fd);   
   }
 
   public loginUser(logReq:UserLoginRequest, http:HttpClient):Observable<PrimitiveResponse>

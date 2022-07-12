@@ -9,12 +9,12 @@ export class UserRegisterRequest
     Birthdate  :string ;
     Address    :string ;
     Type       :string ;
-    ImageRaw;
+    ImageRaw : File;
 
     
 
     constructor(Email:string, Password:string, Re_password:string, Username:string, Name:string, 
-                Surname:string, Birthdate:string, Address:string, Type:string, ImageRaw)
+                Surname:string, Birthdate:string, Address:string, Type:string, ImageRaw:File)
     {
       this.Email        =Email;    
       this.Password     =Password; 

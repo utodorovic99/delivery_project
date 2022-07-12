@@ -8,3 +8,8 @@
   {
     width: 75%;
   }
+
+  tr
+  {
+    cursor: pointer;
+  }

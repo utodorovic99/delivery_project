@@ -77,9 +77,10 @@
                 <div *ngSwitchCase="'History'">
                     <app-orders [ordersContext] = "'history'"></app-orders>
                 </div>
-                <!--CurrentOrderViewState_changedEvent-->
-                <div *ngSwitchCase="'New-Current'">                  
-                    <app-orders [ordersContext] = "'new-current'"></app-orders>
+              
+                <div *ngSwitchCase="'New-Current'">  
+                    <app-orders (OrdersComponentHidden_changedEvent)  ='OnOrdersComponentHidden_changed($event)' [ordersContext] = "'new-current'"></app-orders>
+                    <app-products *ngIf="OrdersComponentHidden"></app-products>            
                 </div>
 
             </div>

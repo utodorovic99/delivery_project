@@ -38,8 +38,7 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
   @ViewChild(MatPaginator) orderItemsPaginator!: MatPaginator;
 
   @Input() ordersContext='none';
-
-  @Output() public CurrentOrderViewState_changedEvent = new EventEmitter();
+  @Output() public OrdersComponentHidden_changedEvent = new EventEmitter();
 
   displayedColumnsOrders:     string[] = ['id', 'consumer',  'deliveryman', 'price', 'address', 'comment', 'status'];
   displayedColumnsOrderItems: string[] = ['name', 'quantity',  'unit price', 'total item price']
@@ -48,6 +47,10 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
   dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
 
   deliveryFee=0;
+  controlHidden=false;
+  acceptAvailable=false;
+  private seledOrderId;
+
   constructor(private http: HttpClient, private productService:ProductService)  {  }
   
   ngOnInit(): void 
@@ -57,9 +60,9 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
       case 'all':          { this.getAllOrders();       break;}
       case 'available':    { this.getAvailableOrders(); break;}
       case 'completed':    { this.getCompletedOrders(); break;}
-      case 'current':      {this.getCurrentOrder();     break;}
+      case 'current':      {this.getCurrentOrder();     break;}  //For Deliveryman
       case 'history':      {this.getHistoryOrders();    break;}
-      case 'new-current':  {this.getNewCurrentOrders(); break;}
+      case 'new-current':  {this.getNewCurrentOrders(); break;}  //For Consumer
     }
   }
 
@@ -144,40 +147,6 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
       }); 
   }
 
-  private getCurrentOrder()
-  {
-    if(this.ordersContext!='current') return;
-
-    let coverted = localStorage.getItem('token_converted');
-    if (coverted==null) coverted ="";
-    if(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]!='Deliveryman' &&
-    JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]!='Consumer') return;
-
-    this.productService.getCurrentOrder(this.http, JSON.parse(coverted)['username']).subscribe(
-      {
-        next: (data)=>
-        {
-          if((data as Order[]).length==0)
-          {
-            console.log('emiting from orders: not taken')
-            this.CurrentOrderViewState_changedEvent.emit('not-taken');
-          }
-          else
-          {
-            console.log('emiting from orders: taken')
-            this.CurrentOrderViewState_changedEvent.emit('taken');
-          }
-
-          this.PlotOrders(data); 
-        },
-
-        error: (error)=>
-        {
-          //
-        },
-      });
-  }
-
   private getHistoryOrders()
   {
     if(this.ordersContext!='history') return;
@@ -200,6 +169,29 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
       });
   }
 
+  private getCurrentOrder()
+  {
+    if(this.ordersContext!='current') return;
+
+    let coverted = localStorage.getItem('token_converted');
+    if (coverted==null) coverted ="";
+    if(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]!='Deliveryman' &&
+    JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]!='Consumer') return;
+
+    this.productService.getCurrentOrder(this.http, JSON.parse(coverted)['username']).subscribe(
+      {
+        next: (data)=>
+        {       
+          this.PlotOrders(data); 
+        },
+
+        error: (error)=>
+        {
+          //
+        },
+      });
+  }
+
   private getNewCurrentOrders()
   {
     if(this.ordersContext!='new-current') return;
@@ -212,6 +204,16 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
       {
         next: (data)=>
         {
+          if((data as Order[]).length==0 && this.ordersContext=='new-current')
+          {
+            this.controlHidden = true;
+            this.OrdersComponentHidden_changedEvent.emit(true);
+          }
+          else
+          {
+            this.controlHidden = false;
+            this.OrdersComponentHidden_changedEvent.emit(false);
+          }
           this.PlotOrders(data); 
         },
 
@@ -224,7 +226,9 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
 
   private PlotOrders(data)
   {
-    this.deliveryFee=data[0]['deliveryFee'];
+    if(data[0]!=undefined)
+      this.deliveryFee=data[0]['deliveryFee'];
+
     ELEMENT_DATA_ORDERS.splice(0);
     let price =0;
     for(let order in data as Order[])
@@ -255,29 +259,38 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
     }
   }
 
+  private PlotOrderItems(data)
+  {
+    ELEMENT_DATA_ORDER_ITEMS.splice(0);
+    let itemPrice=0;
+    for(let orderItem in data as any)
+    {
+      itemPrice=(data[orderItem]['quantity'] as number)*(data[orderItem]['unitPrice'] as number);
+      ELEMENT_DATA_ORDER_ITEMS.push({name:data[orderItem]['name'], quantity:data[orderItem]['quantity'] as number,  
+                                      unitPrice:data[orderItem]['unitPrice'] as number, 
+                                      totalItemPrice: itemPrice}); 
+    }
+    this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
+    this.tables.toArray()[1].renderRows();
+    setTimeout(() =>{
+      this.dataSourceOrderItems.paginator = this.orderItemsPaginator;
+    },100); 
+
+    this.acceptAvailable = true;
+  }
+
   tableOrdersRowClick(rowOrder)
   {
     let coverted = localStorage.getItem('token_converted');
     if (coverted==null) coverted ="";
-    this.productService.getOrderItemsFor(this.http, rowOrder['id'], JSON.parse(coverted)['username']).subscribe(
+
+    this.seledOrderId=rowOrder['id'];
+    this.productService.getOrderItemsFor(this.http, this.seledOrderId, JSON.parse(coverted)['username']).subscribe(
       {
         
         next: (data)=>
         {
-          ELEMENT_DATA_ORDER_ITEMS.splice(0);
-          let itemPrice=0;
-          for(let orderItem in data as any)
-          {
-            itemPrice=(data[orderItem]['quantity'] as number)*(data[orderItem]['unitPrice'] as number);
-            ELEMENT_DATA_ORDER_ITEMS.push({name:data[orderItem]['name'], quantity:data[orderItem]['quantity'] as number,  
-                                            unitPrice:data[orderItem]['unitPrice'] as number, 
-                                            totalItemPrice: itemPrice}); 
-          }
-          this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
-          this.tables.toArray()[1].renderRows();
-          setTimeout(() =>{
-            this.dataSourceOrderItems.paginator = this.orderItemsPaginator;
-          },100); 
+          this.PlotOrderItems(data);
         },
 
         error: (error)=>
@@ -285,5 +298,29 @@ export class OrdersComponent implements OnInit, AfterViewInit  {
           //
         }
       }); 
+  }
+
+  tryOrderAccept()
+  {
+    if(this.ordersContext!='available') return;
+
+    let coverted = localStorage.getItem('token_converted');
+    if (coverted==null) coverted ="";
+    if(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]!='Deliveryman') return;
+
+    this.productService.acceptOrder(this.http, this.seledOrderId).subscribe(
+      {
+        next: (data)=>
+        {       
+          this.ordersContext='current';
+          this.getCurrentOrder();
+          this.PlotOrderItems('');
+        },
+
+        error: (error)=>
+        {
+          //
+        },
+      });
   }
 }

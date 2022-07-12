@@ -2,13 +2,14 @@ namespace DeliveryService.DTOs
 {
   public class OrderDTO
   {
-    public OrderDTO(List<OrderItemDTO> items, double deliveryFee, string address, string comment, char status, int id)
+    public OrderDTO(List<OrderItemDTO> items, double deliveryFee, string address, string comment, char status, int id, string timeExpected)
     {
       Items = items;
       DeliveryFee = deliveryFee;
       Address = address;
       Comment = comment;
       Status = status;
+      TimeExpected = timeExpected;
     }
 
     public OrderDTO()
@@ -19,7 +20,8 @@ namespace DeliveryService.DTOs
       Comment = "";
       Status = 'u';
       Id = Id;
-    }
+      TimeExpected = "";
+  }
 
     private static double _delivery_fee=0;
     public static void SetConstDeliveryFee(double amount)
@@ -41,5 +43,7 @@ namespace DeliveryService.DTOs
     public char Status { get; set; }
 
     public int Id { get; set; }
+
+    public string TimeExpected { get; set; }
   }
 }

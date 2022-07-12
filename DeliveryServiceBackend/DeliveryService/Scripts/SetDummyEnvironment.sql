@@ -1,3 +1,6 @@
+--Server name: DESKTOP-EQC5ME2\SQLEXPRESS
+--DB Name:     DeliveryServiceDB
+
 
 --DROP TABLE  dbo.OrderItems;
 --DROP TABLE  dbo.ProductDefinitions;
@@ -111,7 +114,7 @@ INSERT INTO dbo.Users VALUES('ugljesa_dummy1_admin',    'dummy_mail_1@gmail.com'
 							 'Ugljesa_dummy1',		    'Todorovic_dummy1',					'1999-11-17',						
 							 'Bul. Despota stefana 7',  'a','select_image.png', 1);
 
-INSERT INTO dbo.Users VALUES('ugljesa_dummy2_admin',    'dummy_mail_2gmail.com',    'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
+INSERT INTO dbo.Users VALUES('ugljesa_dummy2_admin',    'dummy_mail_2@gmail.com',    'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy2',          'Todorovic_dummy2',                 '1999-11-18',
 							 'Bul. Despota stefana 8',  'a',
 							 'sin_dragan.jpg', 1);
@@ -136,25 +139,25 @@ INSERT INTO dbo.Users VALUES('ugljesa_dummy6_consumer', 'dummy_mail_6@gmail.com'
 							 'Bul. Despota stefana 13',	'c',
 							 'select_image.png',1);
 -----------------------------------------------------------------------------------------------
-CREATE TABLE dbo.OrdersTmp(Id int, Consumer varchar(35), Deliveryman varchar(35), Address varchar(35), Comment varchar(50), Status varchar(1));
-INSERT INTO dbo.OrdersTmp VALUES (0, 'ugljesa_dummy5_consumer', '',						    'Dummy Address1', ' Dummy Comment 1', 'a');
-INSERT INTO dbo.OrdersTmp VALUES (1, 'ugljesa_dummy5_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address2',  'Dummy Comment 2', 't');
-INSERT INTO dbo.OrdersTmp VALUES (2, 'ugljesa_dummy5_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address3',  'Dummy Comment 3', 'c');
-INSERT INTO dbo.OrdersTmp VALUES (3, 'ugljesa_dummy5_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address4',  'Dummy Comment 4', 'c');
-INSERT INTO dbo.OrdersTmp VALUES (4, 'ugljesa_dummy5_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address5',  'Dummy Comment 5', 't');
-INSERT INTO dbo.OrdersTmp VALUES (5, 'ugljesa_dummy6_consumer', '',                         'Dummy Address6',  'Dummy Comment 6', 'a');
-INSERT INTO dbo.OrdersTmp VALUES (6, 'ugljesa_dummy6_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address7',  'Dummy Comment 7', 't');
-INSERT INTO dbo.OrdersTmp VALUES (7, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address8',  'Dummy Comment 8', 'c');
-INSERT INTO dbo.OrdersTmp VALUES (8, 'ugljesa_dummy6_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address9',  'Dummy Comment 9', 'c');
-INSERT INTO dbo.OrdersTmp VALUES (9, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address10', 'Dummy Comment 10','t');
+CREATE TABLE dbo.OrdersTmp(Id int, Consumer varchar(35), Deliveryman varchar(35), Address varchar(35), Comment varchar(50), Status varchar(1), TimeExpected varchar(20));
+INSERT INTO dbo.OrdersTmp VALUES (0, 'ugljesa_dummy5_consumer', '',						    'Dummy Address1',  'Dummy Comment 1', 'a', '');
+INSERT INTO dbo.OrdersTmp VALUES (1, 'ugljesa_dummy5_consumer', '',                         'Dummy Address2',  'Dummy Comment 2', 'a', '');
+INSERT INTO dbo.OrdersTmp VALUES (2, 'ugljesa_dummy5_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address3',  'Dummy Comment 3', 'c', '10/07/2022 08:45');
+INSERT INTO dbo.OrdersTmp VALUES (3, 'ugljesa_dummy5_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address4',  'Dummy Comment 4', 'c', '09/07/2022 09:49');
+INSERT INTO dbo.OrdersTmp VALUES (4, 'ugljesa_dummy5_consumer', '',                         'Dummy Address5',  'Dummy Comment 5', 'a', '');
+INSERT INTO dbo.OrdersTmp VALUES (5, 'ugljesa_dummy6_consumer', '',                         'Dummy Address6',  'Dummy Comment 6', 'a', '');
+INSERT INTO dbo.OrdersTmp VALUES (6, 'ugljesa_dummy6_consumer', '',                         'Dummy Address7',  'Dummy Comment 7', 'a', '');
+INSERT INTO dbo.OrdersTmp VALUES (7, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address8',  'Dummy Comment 8', 'c', '08/07/2022 11:22');
+INSERT INTO dbo.OrdersTmp VALUES (8, 'ugljesa_dummy6_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address9',  'Dummy Comment 9', 'c', '07/07/2022 22:35');
+INSERT INTO dbo.OrdersTmp VALUES (9, 'ugljesa_dummy6_consumer', '',                         'Dummy Address10', 'Dummy Comment 10','a', '');
 
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
 
 SET IDENTITY_INSERT dbo.Orders ON;
-INSERT INTO dbo.Orders (Id, Consumer, Deliveryman, Address, Comment, Status)
-SELECT Id, Consumer, Deliveryman, Address, Comment, Status FROM dbo.OrdersTmp;
+INSERT INTO dbo.Orders (Id, Consumer, Deliveryman, Address, Comment, Status, TimeExpected)
+SELECT Id, Consumer, Deliveryman, Address, Comment, Status, TimeExpected FROM dbo.OrdersTmp;
 SET IDENTITY_INSERT dbo.Orders OFF;
 -----------------------------------------------------------------------------------------------
 CREATE TABLE dbo.OrderItemsTmp(OrderId int, ProductId int, Quantity int);

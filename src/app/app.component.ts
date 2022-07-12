@@ -10,7 +10,7 @@ export class AppComponent implements OnInit {
   title = 'Delivery Manager';
   @Output() public SPVisualContext ;
   @Output() public SPVisualState ;
-  @Output() public CurrentOrderViewState ;
+  @Output() public OrdersComponentHidden;  
 
   ngOnInit()
   {
@@ -28,9 +28,8 @@ export class AppComponent implements OnInit {
     this.SPVisualContext=$event;
   }
 
-  OnCurrentOrderViewState_changed($event)
+  OnOrdersComponentHidden_changed($event)
   {
-    console.log('emmiting' + $event);
-    this.CurrentOrderViewState=$event;
+    this.OrdersComponentHidden=$event;
   }
 }
