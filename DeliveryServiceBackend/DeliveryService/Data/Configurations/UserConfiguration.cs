@@ -19,7 +19,6 @@ namespace DeliveryService.Data.Configurations
       builder.Property(x => x.Birthdate).IsRequired();
       builder.Property(x => x.Address).IsRequired();
       builder.Property(x => x.Type).IsRequired();
-      builder.Property(x => x.ImageName).IsRequired();
       builder.Property(x => x.State).IsRequired();
 
       builder.HasIndex(x => x.Email).IsUnique();
@@ -32,7 +31,7 @@ namespace DeliveryService.Data.Configurations
       builder.Property(x => x.Birthdate).HasMaxLength(15);
       builder.Property(x => x.Address).HasMaxLength(35);    
       builder.Property(x => x.Type).HasMaxLength(20);     
-      builder.Property(x => x.ImageName).HasMaxLength(40);
+      builder.Property(x => x.ImageName).HasMaxLength(65);  
     }
   }
 }

@@ -4,6 +4,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { UserService } from 'src/app/services/user.service';
 import { DataSource } from '@angular/cdk/collections';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export interface UserView{
   email      :string ;
@@ -34,7 +35,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
  verifyWindowVisible=false;
  selectedUserUsername="";
  selectedUserRow="";
-  constructor(private http: HttpClient,private userService:UserService) { }
+  constructor(private http: HttpClient,private userService:UserService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void 
   {
@@ -43,9 +44,19 @@ export class UsersComponent implements OnInit, AfterViewInit {
         next: (data)=>
         {
           ELEMENT_DATA_USERS.splice(0);
+          var url;
+          var urlPass;
           for(let user in data as unknown as UserView[])
-          {          
-            ELEMENT_DATA_USERS.push({image:'assets\\Images\\select_image.png',email:data[user]['email'], 
+          {     
+            if(data[user]['imageRaw']!=='AA==')
+            {
+              console.log(data[user]['imageRaw']);
+              url = 'data:image/png;base64,' + data[user]['imageRaw'];
+              urlPass= this.sanitizer.bypassSecurityTrustUrl(url);
+            }
+            else urlPass = 'assets\\Images\\select_image.png'
+            
+            ELEMENT_DATA_USERS.push({ image:urlPass,                       email:data[user]['email'], 
                                       username:data[user]['username'],     name:data[user]['name'],        surname:data[user]['surname'], birthdate: data[user]['birthdate'],  
                                       address:data[user]['address'],       type:data[user]['type'],        state: this.GetUserSyatysByCode(data[user]['state'])});
           }

@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ImgRepo\shaq.png" />
+    <None Remove="ImgRepo\sin_dragan.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />

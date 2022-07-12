@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -21,6 +22,8 @@ namespace DeliveryService.Services.Impl
     private readonly DeliveryDataContext _dbContext;
     private static readonly string _pepper= "dDHsnc1x";
     private static IConfigurationSection _secretKey;
+    private readonly string _img_repo_base_path = Path.Combine(Directory.GetCurrentDirectory(), "ImgRepo");
+    private static readonly int _MAX_IMG_SIZE_B = 500000;
 
     public UserService(IMapper mapper, IConfiguration config, DeliveryDataContext dbContext)
     {
@@ -35,9 +38,11 @@ namespace DeliveryService.Services.Impl
       if ((errMsg = UserValidator.ValidateUserBaseCriteria(regReq)) !="") return false;
       if ((errMsg = UserValidator.ValidateUserUniqueEmail(regReq, _dbContext)) != "") return false;
       if ((errMsg = UserValidator.ValidateUserUniqueUsername(regReq, _dbContext)) != "") return false;
+      if (regReq.ImageRaw.Length > _MAX_IMG_SIZE_B)
+        { errMsg = "Image is too large (max. 500kB)"; return false; }
 
       string imgName="";
-      if (!HandleStoreUserImage(regReq, out imgName)) imgName = User.DEFAULT_IMG_NAME;
+      if (regReq.ImageRaw.Length > 0 && !HandleStoreUserImage(regReq, out imgName)) imgName = "";
 
       _dbContext.Users.Add
       (
@@ -199,7 +204,20 @@ namespace DeliveryService.Services.Impl
 
     public List<UserDTO> GetAll()
     {
-      return _mapper.Map<List<UserDTO>>(_dbContext.Users.ToList());
+      var users= _mapper.Map<List<UserDTO>>(_dbContext.Users.ToList());
+      string imgName = "";
+      var fullPath = "";
+      foreach (var user in users)
+      {
+        imgName = _dbContext.Users.Find(user.Username).ImageName;
+        fullPath =  Path.Combine(_img_repo_base_path, imgName);
+        if (System.IO.File.Exists(fullPath))
+        {
+          user.ImageRaw = System.IO.File.ReadAllBytes(fullPath);
+        }      
+      }
+
+      return users;
     }
 
     private bool HandleUpdateUserImage(UserUpdateRequestDTO updateReq, out string imgName)
@@ -215,26 +233,32 @@ namespace DeliveryService.Services.Impl
     {
       imgName = "";
 
-      //TODO:
+      if (regReq.ImageRaw != null && regReq.ImageRaw.Length > 0)
+      {
+        var fileName = ContentDispositionHeaderValue.Parse(regReq.ImageRaw.ContentDisposition).FileName.Trim('"');
+        var fullPath = Path.Combine(_img_repo_base_path, fileName);
 
-      //if (file != null && file.Length > 0)
-      //{
-      //  var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-      //  var fullPath = Path.Combine(_img_repo_base_path, fileName);
+        if (System.IO.File.Exists(fullPath))
+        {
+          var fileNameParts = fileName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+          if (fileNameParts.First().Length > 15) fileNameParts[0] = "";
 
-      //  if (System.IO.File.Exists(fullPath))
-      //  {
-      //    fileName = string.Format(@"{0}_usr_img.{1}", Guid.NewGuid(), fileName.Split(new char[] { '.' }.Last(), StringSplitOptions.RemoveEmptyEntries));
-      //    fullPath = Path.Combine(_img_repo_base_path, fileName);
-      //  }
+          fileName = string.Format(@"{0}_{1}.{2}", Guid.NewGuid(), fileNameParts[0], fileNameParts.Last());
+          fullPath = Path.Combine(_img_repo_base_path, fileName);
+        }
 
-      //  using (var stream = new FileStream(fullPath, FileMode.Create))
-      //  {
-      //    await file.CopyToAsync(stream);
-      //  }
-      //  newUser.ImageName = fileName;
+        Task.Factory.StartNew(() =>
+        {
+          using (var stream = new FileStream(fullPath, FileMode.Create))
+          {
+            regReq.ImageRaw.CopyTo(stream);
+          }
+        });
 
-      return true;
+        imgName = fileName;
+        return true;
+      }
+      return false;
     }
 
     public UserDTO GetByUsername(string username)

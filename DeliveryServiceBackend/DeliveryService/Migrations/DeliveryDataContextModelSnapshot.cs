@@ -162,8 +162,8 @@ namespace DeliveryService.Migrations
 
                     b.Property<string>("ImageName")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
+                        .HasMaxLength(65)
+                        .HasColumnType("nvarchar(65)");
 
                     b.Property<string>("Name")
                         .IsRequired()

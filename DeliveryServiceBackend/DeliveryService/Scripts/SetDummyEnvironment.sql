@@ -112,32 +112,33 @@ SELECT ProductId, IngredientId FROM dbo.ProductDefinitionsTmp;
 -----------------------------------------------------------------------------------------------
 INSERT INTO dbo.Users VALUES('ugljesa_dummy1_admin',    'dummy_mail_1@gmail.com',	'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy1',		    'Todorovic_dummy1',					'1999-11-17',						
-							 'Bul. Despota stefana 7',  'a','select_image.png', 1);
+							 'Bul. Despota stefana 7',  'a',
+                             'dummy_img.png', 1);
 
 INSERT INTO dbo.Users VALUES('ugljesa_dummy2_admin',    'dummy_mail_2@gmail.com',    'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy2',          'Todorovic_dummy2',                 '1999-11-18',
 							 'Bul. Despota stefana 8',  'a',
-							 'sin_dragan.jpg', 1);
+							 '', 1);
       
 INSERT INTO dbo.Users VALUES('ugljesa_dummy3_delivery', 'dummy_mail_3@gmail.com',	'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy3',			'Todorovic_dummy3',					'1999-11-19',
 							 'Bul. Despota stefana 9',	'd',
-							 'select_image.png',1);
+							 'dummy_img.png',1);
 
 INSERT INTO dbo.Users VALUES('ugljesa_dummy4_delivery', 'dummy_mail_4@gmail.com',	'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy4',			'Todorovic_dummy4',					'1999-11-20',
 							 'Bul. Despota stefana 10',	'd',
-							 'sin_dragan.jpg',1);
+							 '',1);
      
 INSERT INTO dbo.Users VALUES('ugljesa_dummy5_consumer', 'dummy_mail_5@gmail.com',	'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy5',			'Todorovic_dummy5',					'1999-11-21',
 							 'Bul. Despota stefana 12',	'c',
-							 'sin_dragan.jpg',1);
+							 'dummy_img.png',1);
 
 INSERT INTO dbo.Users VALUES('ugljesa_dummy6_consumer', 'dummy_mail_6@gmail.com',		'dae7ac9a262d8b6577823250295f42c2d57ecf46e009184dcc03af2337293d59',
 							 'Ugljesa_dummy6',			'Todorovic_dummy6',					    '1999-11-22',
 							 'Bul. Despota stefana 13',	'c',
-							 'select_image.png',1);
+							 '',1);
 -----------------------------------------------------------------------------------------------
 CREATE TABLE dbo.OrdersTmp(Id int, Consumer varchar(35), Deliveryman varchar(35), Address varchar(35), Comment varchar(50), Status varchar(1), TimeExpected varchar(20));
 INSERT INTO dbo.OrdersTmp VALUES (0, 'ugljesa_dummy5_consumer', '',						    'Dummy Address1',  'Dummy Comment 1', 'a', '');

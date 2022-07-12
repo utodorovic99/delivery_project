@@ -20,8 +20,6 @@ namespace DeliveryService.Controllers
   public class UserController : ControllerBase
   {
     private readonly DeliveryDataContext _context;
-    private readonly string _img_repo_base_path= Path.Combine(Directory.GetCurrentDirectory(), "ImgRepo");
-
     private readonly ITransistentUserService _transistentUserService;
 
     public UserController(DeliveryDataContext context, ITransistentUserService transistentRegisterService)
@@ -35,9 +33,6 @@ namespace DeliveryService.Controllers
     [Route("api/[controller]/register")]
     public ActionResult<string> Register([FromForm]UserRegisterRequestDTO regReq)
     {
-     
-      IFormFile file = regReq.ImageRaw as IFormFile;
-
       string errStr = "";
       if (!_transistentUserService.TryRegister(regReq, out errStr))
         return BadRequest(errStr);

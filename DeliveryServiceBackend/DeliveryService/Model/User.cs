@@ -48,14 +48,7 @@ namespace DeliveryService.Model
     public string Birthdate   { get; set; } = String.Empty;
     public string Address     { get; set; } = String.Empty;
     public char Type        { get; set; }                     //Deliveryman(d), Administrator(a), Consumer(c)
-    public string ImageName
-    {
-      get { return _imgName; }
-      set
-      {
-        if (value.Equals(String.Empty)) _imgName = DEFAULT_IMG_NAME;
-      }
-    }
+    public string ImageName { get; set; }
     public int State { get; set; }                            //Not Verified, Pending, Verified
   }
 }
