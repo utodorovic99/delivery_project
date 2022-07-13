@@ -27,9 +27,9 @@ namespace DeliveryService.Controllers
 
     //Consumer executes order
     [HttpPost]
-    [Route("api/[controller]/orders/{username}")]
+    [Route("api/[controller]/orders/publish/{username}")]
     [Authorize(Roles = "Consumer")]
-    public ActionResult<PrimitiveResponseDTO> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
+    public  async Task<ActionResult<PrimitiveResponseDTO>> Order([System.Web.Http.FromUri] string username, [FromBody] OrderDTO orderDTO)
     {
       var errMsg = "";
       if (_transistentProductsService.PublishOrder(orderDTO, out errMsg))
@@ -42,7 +42,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/{orderId}/confirm")]
     [Authorize(Roles = "Consumer")]
-    public ActionResult<PrimitiveResponseDTO> ConfirmDelivery([System.Web.Http.FromUri] int orderId)
+    public async Task<ActionResult<PrimitiveResponseDTO>> ConfirmDelivery([System.Web.Http.FromUri] int orderId)
     {
       var errMsg = "";
       if (_transistentProductsService.ConfirmDelivery(orderId, out errMsg))
@@ -55,7 +55,7 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]/orders")]
     [Authorize(Roles = "Administrator")]
-    public ActionResult<List<OrderDTO>> Orders()
+    public async Task<ActionResult<List<OrderDTO>>> Orders()
     {
       return Ok(_transistentProductsService.GetAllOrders());
     }
@@ -63,7 +63,7 @@ namespace DeliveryService.Controllers
     //All orders items for selected order
     [HttpGet]
     [Route("api/[controller]/orders/{orderId}/items")]
-    public ActionResult<List<OrderItemDTO>> OrderItems([System.Web.Http.FromUri] int orderId)
+    public async Task<ActionResult<List<OrderItemDTO>>> OrderItems([System.Web.Http.FromUri] int orderId)
     {
       
       var errMsg = "";
@@ -93,7 +93,7 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]/orders/confirmed-for/{username}")]
     [Authorize(Roles = "Consumer")]
-    public ActionResult<List<OrderDTO>> ConfirmedOrdersFor([System.Web.Http.FromUri] string username)
+    public async Task<ActionResult<List<OrderDTO>>> ConfirmedOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
       var result = _transistentProductsService.ConfirmedOrdersFor(username, out errMsg);
@@ -105,9 +105,15 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]/orders/completed-for/{username}")]
     [Authorize(Roles = "Deliveryman")]
-    public ActionResult<List<OrderDTO>> CompletedOrdersFor([System.Web.Http.FromUri] string username)
+    public async Task<ActionResult<List<OrderDTO>>> CompletedOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
+      if (!_transistentUserService.IsVerified(username))
+      {
+        errMsg = "You are not verified";
+        return BadRequest(errMsg);
+      }
+      
       var result = _transistentProductsService.CompletedOrdersFor(username, out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
@@ -118,10 +124,16 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]/orders/current-for/{username}")]
     [Authorize(Roles = "Deliveryman,Consumer")]
-    public ActionResult<List<OrderDTO>>CurrentOrderFor([System.Web.Http.FromUri] string username)
+    public async Task<ActionResult<List<OrderDTO>>> CurrentOrderFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
       var userRole = _transistentUserService.GetRole(username);
+      if(userRole == "d" && !_transistentUserService.IsVerified(username))
+      {
+        errMsg = "You are not verified";
+        return BadRequest(errMsg);
+      }
+
       var result = _transistentProductsService.CurrentOrderFor(username, userRole, out errMsg);
       if (errMsg == "") return result;
       return BadRequest(errMsg);
@@ -131,7 +143,7 @@ namespace DeliveryService.Controllers
     [HttpGet]
     [Route("api/[controller]/orders/available-for/{username}")]
     [Authorize(Roles = "Deliveryman")]
-    public ActionResult<List<OrderDTO>> AvailableOrdersFor([System.Web.Http.FromUri] string username)
+    public async Task<ActionResult<List<OrderDTO>>> AvailableOrdersFor([System.Web.Http.FromUri] string username)
     {
       var errMsg = "";
       var result = _transistentProductsService.AvailableOrdersFor(username, out errMsg);
@@ -143,13 +155,18 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/orders/accept/{orderId}")]
     [Authorize(Roles = "Deliveryman")]
-    public ActionResult<PrimitiveResponseDTO> AcceptOrder([System.Web.Http.FromUri] int orderId)
+    public async Task<ActionResult<PrimitiveResponseDTO>> AcceptOrder([System.Web.Http.FromUri] int orderId)
     {
       var errMsg = "";
       var identity = HttpContext.User.Identity as ClaimsIdentity;
       string username = "";
       if (identity != null)
         username = identity.FindFirst("username").Value;
+      if (!_transistentUserService.IsVerified(username))
+      {
+        errMsg = "You are not verified";
+        return BadRequest(errMsg);
+      }
       var result = _transistentProductsService.AcceptOrder(orderId, username ,out errMsg);
       if (errMsg == "") return new PrimitiveResponseDTO(result,"string");
       return BadRequest(errMsg);
@@ -159,7 +176,7 @@ namespace DeliveryService.Controllers
     [HttpPost]
     [Route("api/[controller]/products/create")]
     [Authorize(Roles = "Administrator")]
-    public ActionResult<PrimitiveResponseDTO> CreateProduct([FromBody] ProductDTO product)
+    public async Task<ActionResult<PrimitiveResponseDTO>> CreateProduct([FromBody] ProductDTO product)
     {
       var errMsg = "";
       var result = _transistentProductsService.CreateProduct(product, out errMsg);
@@ -170,7 +187,7 @@ namespace DeliveryService.Controllers
     //Get all products
     [HttpGet]
     [Route("api/[controller]/products")]
-    public ActionResult<List<ProductDTO>>Products()
+    public async Task<ActionResult<List<ProductDTO>>>Products()
     {
       var errMsg = "";
       var result = _transistentProductsService.GetAllProducts(out errMsg);
@@ -181,7 +198,7 @@ namespace DeliveryService.Controllers
     //Get all product ingredients
     [HttpGet]
     [Route("api/[controller]/products/ingredients")]
-    public ActionResult<List<string>> ProductIngredients()
+    public async Task<ActionResult<List<string>>> ProductIngredients()
     {
       var errMsg = "";
       var result = _transistentProductsService.GetAllProductIngredients(out errMsg);
@@ -192,7 +209,7 @@ namespace DeliveryService.Controllers
     //Get all delivery fee
     [HttpGet]
     [Route("api/[controller]/orders/delivery-fee")]
-    public ActionResult<PrimitiveResponseDTO> GetDeliveryFee()
+    public async Task<ActionResult<PrimitiveResponseDTO>> GetDeliveryFee()
     {
        return Ok(new PrimitiveResponseDTO(_transistentProductsService.GetDeliveryFee().ToString(), "double"));
     }

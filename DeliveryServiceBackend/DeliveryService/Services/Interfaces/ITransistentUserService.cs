@@ -23,5 +23,7 @@ namespace DeliveryService.Services.Interfaces
     public bool ValidatePassword(string username, string passwordPlain);
 
     public string GetRole(string username);
+
+    public bool IsVerified(string username);
   }
 }

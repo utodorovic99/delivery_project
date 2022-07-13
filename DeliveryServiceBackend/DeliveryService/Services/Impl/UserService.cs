@@ -4,11 +4,15 @@ using DeliveryService.Data;
 using DeliveryService.DTOs;
 using DeliveryService.Model;
 using DeliveryService.Services.Interfaces;
+using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
+using MimeKit.Text;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,6 +26,13 @@ namespace DeliveryService.Services.Impl
     private readonly DeliveryDataContext _dbContext;
     private static readonly string _pepper= "dDHsnc1x";
     private static IConfigurationSection _secretKey;
+    private static IConfigurationSection _serviceNotificationEmail;
+    private static IConfigurationSection _serviceNotificationUsername;
+    private static IConfigurationSection _serviceNotificationPassword;
+    private static IConfigurationSection _serviceNotificationSMTPHostAddr;
+    private static IConfigurationSection _serviceNotificationSMTPHostPort;
+     
+
     private readonly string _img_repo_base_path = Path.Combine(Directory.GetCurrentDirectory(), "ImgRepo");
     private static readonly int _MAX_IMG_SIZE_B = 500000;
 
@@ -30,6 +41,11 @@ namespace DeliveryService.Services.Impl
       this._dbContext = dbContext;
       this._mapper = mapper;
       _secretKey = config.GetSection("SecretKey");
+      _serviceNotificationEmail = config.GetSection("ServiceNotificationEmail");
+      _serviceNotificationUsername = config.GetSection("ServiceNotificationUsername");
+      _serviceNotificationPassword = config.GetSection("ServiceNotificationPassword");
+      _serviceNotificationSMTPHostAddr = config.GetSection("ServiceNotificationSMTPHostAddr");
+      _serviceNotificationSMTPHostPort = config.GetSection("ServiceNotificationSMTPHostPort");
     }
 
     public bool TryRegister(UserRegisterRequestDTO regReq, out string errMsg)
@@ -285,9 +301,22 @@ namespace DeliveryService.Services.Impl
       errMsg = "";
       var user = _dbContext.Users.Find(username);
       if (user == null) { errMsg = "Invalid username"; return false;  }
-
+      var oldState = user.State;
       user.State = (int)state;
       _dbContext.SaveChanges();
+
+      if (user.Type == 'd' && state == EUserState.Confirmed && oldState != (int)EUserState.Confirmed)
+      {
+        try
+        {
+          ExecuteMailNotification
+            (_serviceNotificationUsername.Value,
+             "Account Confirmed",
+             $"Your account is verified at {DateTime.Now.ToString()}, bee free to use it.");
+        }
+        catch (Exception Exc) { }
+      }
+      
       return true;
     }
 
@@ -309,6 +338,34 @@ namespace DeliveryService.Services.Impl
     public string GetRole(string username)
     {
       return _dbContext.Users.ToList().Where(x => x.Username.Equals(username)).ToList().First().Type.ToString();
+    }
+
+    public bool IsVerified(string username)
+    {
+      var target=_dbContext.Users.Find(username);
+      if (target is null) return false;
+
+      return (int)target.State == (int)EUserState.Confirmed;
+    }
+
+    private void ExecuteMailNotification(string to, string subject, string body)
+    {
+      //For testing generate address on https://ethereal.email/create,              moq-ing user address by loopback
+      //Note: Turn Off AniMalware software to avoid cetificate
+      var email = new MimeMessage();
+      email.From.Add(MailboxAddress.Parse(_serviceNotificationUsername.Value));
+      email.To.Add(MailboxAddress.Parse(to));
+      email.Subject = subject;
+      email.Body = new TextPart(TextFormat.Html) { Text = body };
+
+      using var smtp = new MailKit.Net.Smtp.SmtpClient();
+      smtp.Connect(_serviceNotificationSMTPHostAddr.Value,
+                   Int32.Parse(_serviceNotificationSMTPHostPort.Value),
+                   SecureSocketOptions.StartTls);    
+
+      smtp.Authenticate(_serviceNotificationUsername.Value, _serviceNotificationPassword.Value);
+      smtp.Send(email);
+      smtp.Disconnect(true);
     }
 
   }

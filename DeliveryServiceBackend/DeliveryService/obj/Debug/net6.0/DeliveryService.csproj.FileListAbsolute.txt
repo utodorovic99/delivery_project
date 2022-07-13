@@ -66,3 +66,6 @@ C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\
 C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
 C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\BCrypt.Net-Next.dll
 C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\MailKit.dll
+C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\MimeKit.dll
+C:\Users\LENOVO\Desktop\Fakultet\4. Godina\Programiranje u smart GRID sistemima\PR87_2018_Projekat\delivery_project\DeliveryServiceBackend\DeliveryService\bin\Debug\net6.0\BouncyCastle.Crypto.dll

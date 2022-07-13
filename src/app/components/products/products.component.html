@@ -86,7 +86,37 @@
         </table>
       </td>
 
-      <td *ngIf="!RenderNewProduct" style="background-color: white;">
+      <td *ngIf="!RenderNewProduct" style="background-color: #a6b2ebff;;">
+
+        <div class="form-outline form-white mb-4" style="width: 70%;">
+          <label class="form-label" for="typeAddressX" style="font-weight:bold">Address<small style="font-weight:lighter;">(required)</small></label>
+          <input required [(ngModel)]="address" name="address" type="text" id="typeAddressX" class="form-control form-control-md" required=""/>
+        </div>
+       
+        <div class="form-outline form-white mb-4" style="width: 70%;">
+          <label class="form-label" for="typeCommentX" style="font-weight:bold">Comment<small style="font-weight:lighter;">(optional)</small></label>
+          <textarea [(ngModel)]="comment" name="comment" id="typeCommentX" class="form-control form-control-md" style="height: 80px;resize: none; font-size:x-small;"></textarea>
+        </div>
+        <hr>
+        <button [disabled]="!submitAvailable" (click)="tryOrderSubmit()" class="btn btn-success" style="font-size: larger; width: 30%;">Submit</button>
+        <div style="float: left;width: 40%">
+          <button (click)="tryAddToCart()" class="btn btn-primary" style="float: right; font-size:larger; width: 75%;">Add</button>
+          <input type="number" id="units" style="width: 25%; height: 35px; float: left;" min="1" max="9" [(ngModel)]="unitsNum">
+        </div>
+        <button (click)="tryRemoveFromCart()" class="btn btn-danger"  style="font-size: larger; float: right;width: 30%">Remove</button>
+        <div style="width: 100%; background:#a6b2ebff;">
+          <label for="totalOrderPrice"><strong><u>TOTAL PRICE: </u></strong></label>
+          <input  style="float: right; text-align: right;" id="totalOrderPrice" type="text" [(ngModel)]="totalOrderPrice" readonly class="form-control form-control-md">
+        </div>
+
+        <div class="form-control-md">
+          <label name="errLbl" class="form-label" style="color: #CD5C5C">{{errTxt}}</label> 
+        </div>
+
+        <div style="width: 100%; background:#a6b2ebff;">
+        <p style="font-size:small"><u><strong>Note:</strong></u><i>Delivery fee costs: <u>{{deliveryFee}}</u></i></p>
+        </div>
+        <hr>
         <mat-table id="#orderItemsTable" [dataSource]="dataSourceOrderItems" class="mat-elevation-z8" style="background-color: #a6b2ebff;">                  
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Name </th>
@@ -111,21 +141,6 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumnsOrderItems"></tr>
           <tr  (click) = "tableItemsRowClick(rowItem)" mat-row *matRowDef="let rowItem; columns: displayedColumnsOrderItems;"></tr>
         </mat-table>
-        <mat-paginator #orderItemsPaginator="matPaginator" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons pag></mat-paginator>
-        
-        <button [disabled]="!submitAvailable" (click)="tryOrderSubmit()" class="btn btn-success" style="font-size: larger; width: 30%;">Submit</button>
-        <div style="float: left;width: 40%">
-          <button (click)="tryAddToCart()" class="btn btn-primary" style="float: right; font-size:larger; width: 75%;">Add</button>
-          <input type="number" id="units" style="width: 25%; height: 35px; float: left;" min="1" max="9" [(ngModel)]="unitsNum">
-        </div>
-        <button (click)="tryRemoveFromCart()" class="btn btn-danger"  style="font-size: larger; float: right;width: 30%">Remove</button>
-        <div style="width: 100%; background:#a6b2ebff;">
-          <label for="totalOrderPrice"><strong><u>TOTAL PRICE: </u></strong></label>
-          <input  style="float: right;" id="totalOrderPrice" type="text" [(ngModel)]="totalOrderPrice" readonly>
-          </div>
-        <div style="width: 100%; background:#a6b2ebff;">
-        <p style="font-size:small"><u><strong>Note:</strong></u><i>Delivery fee costs: <u>{{deliveryFee}}</u></i></p>
-        </div>
       </td>  
     </tr>
   </table>

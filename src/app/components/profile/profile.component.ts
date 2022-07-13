@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
   
   constructor(private http: HttpClient, private userService:UserService, private sanitizer: DomSanitizer) { }
   ngOnInit(): void {
-
+    this.errTxt="";
     this.dissabledFlag=true;
     this.loadData();
   }

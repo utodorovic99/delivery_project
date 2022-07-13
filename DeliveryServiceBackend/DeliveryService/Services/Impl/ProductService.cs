@@ -221,9 +221,11 @@ namespace DeliveryService.Services.Impl
       var orderModel = _mapper.Map<Order>(order);
       orderModel.Status = 'a';
       orderModel.Deliveryman = "";
+      orderModel.Id = 0;
       orderModel = (_dbContext.Orders.Add(orderModel)).Entity;
       _dbContext.SaveChanges();
 
+      CompactOrder(ref order);      //Potential Composite key violation
       foreach (var orderItem in order.Items)
       {
         _dbContext.OrderItems.Add(new OrderItem(orderModel.Id,
@@ -231,8 +233,20 @@ namespace DeliveryService.Services.Impl
                                                 orderItem.Quantity));
       }
 
-      _dbContext.SaveChangesAsync();
+      _dbContext.SaveChanges();
       return true;
+    }
+
+    private void CompactOrder(ref OrderDTO order)
+    {
+      Dictionary<string, OrderItemDTO> productItemsByProduct = new Dictionary<string, OrderItemDTO>();
+      foreach(var orderItem in order.Items)
+      {
+        if (!productItemsByProduct.ContainsKey(orderItem.Name)) productItemsByProduct.Add(orderItem.Name, orderItem);
+        else
+          productItemsByProduct[orderItem.Name].Quantity += orderItem.Quantity;    
+      }
+      order.Items = productItemsByProduct.Values.ToList();
     }
 
     private void AttachItemsToOrder(ref List<OrderDTO> orders)

@@ -89,6 +89,15 @@ export class ProductService {
     return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}/${orderId}`, '', {headers: this.headers}); 
   }
 
+  public submitOrder(http:HttpClient, order:Order, username:string):Observable<number | PrimitiveResponse>
+  {
+    //[Route("api/[controller]/orders/publish/{username}")]
+    let serviceUrl="orders";
+    let subService ="publish";
+
+    let body = JSON.stringify(order);
+    return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${serviceUrl}/${subService}/${username}`,body, {headers: this.headers}); 
+  }
 
   public getDeliveryFee(http:HttpClient):Observable<number | PrimitiveResponse>
   {

@@ -46,6 +46,7 @@ export class LogginComponent implements OnInit {
   {
     this.setLoginEnvironment();
     this.setLoginContext();
+    this.errTxt="";
   }
 
   SubmitLogin(Login:any)
@@ -129,6 +130,7 @@ export class LogginComponent implements OnInit {
       let regReq = new UserRegisterRequest(this.email, this.password, this.re_password, this.username, this.name, 
                                            this.surname, this.birthdate, this.address, this.type,this.selected_img);
 
+      console.log(regReq);
       this.registrationService.registerUser(regReq, this.http).subscribe(
         {
           next: (data)=>

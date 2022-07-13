@@ -19,6 +19,12 @@ DELETE FROM dbo.Products
 DELETE FROM dbo.Ingredients
 DELETE FROM dbo.Users
 
+DROP TABLE dbo.OrdersTmp
+DROP TABLE ProductsTmp;
+DROP TABLE ProductDefinitionsTmp;
+DROP TABLE dbo.IngredientsTmp;
+DROP TABLE dbo.OrderItemsTmp;
+
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
@@ -188,13 +194,9 @@ INSERT INTO dbo.OrderItemsTmp VALUES (9, (SELECT Id FROM Products WHERE Name = '
 SET IDENTITY_INSERT dbo.Ingredients OFF;
 SET IDENTITY_INSERT dbo.Products OFF;
 SET IDENTITY_INSERT dbo.Orders OFF;
-SET IDENTITY_INSERT dbo.OrderItems OFF;
 
-SET IDENTITY_INSERT dbo.OrderItems ON;
 INSERT INTO dbo.OrderItems (OrderId, ProductId, Quantity)
 SELECT OrderId, ProductId, Quantity FROM dbo.OrderItemsTmp;
-SET IDENTITY_INSERT dbo.OrderItems OFF;
-
 -----------------------------------------------------------------------------------------------
 
 DROP TABLE dbo.OrdersTmp

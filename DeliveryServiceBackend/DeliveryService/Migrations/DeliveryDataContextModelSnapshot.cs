@@ -87,10 +87,7 @@ namespace DeliveryService.Migrations
             modelBuilder.Entity("DeliveryService.Model.OrderItem", b =>
                 {
                     b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"), 1L, 1);
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

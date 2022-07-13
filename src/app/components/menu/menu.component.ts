@@ -10,7 +10,7 @@ export class MenuComponent implements OnInit {
   @Output() public SPVisualContext_changedEvent = new EventEmitter();
   @Output() public SPVisualState_changedEvent = new EventEmitter();
   @Input() public roleContext;
-  @Input() public expectedDeliveryMoment;
+  @Input() public expectedDeliveryMoment=0;
   @ViewChild('cd', { static: false }) private countdown!: CountdownComponent;
   
 
@@ -18,7 +18,8 @@ export class MenuComponent implements OnInit {
   
   ngOnInit(): void {
     this.SPVisualState_changedEvent.emit('Home');
-    this.countdown.begin();
+    if(this.countdown!=undefined)
+      this.countdown.begin();
   }
 
   logout()
@@ -79,6 +80,7 @@ export class MenuComponent implements OnInit {
 
   handleEvent($event)
   {
-    this.countdown.begin();
+    if(this.countdown!=undefined)
+      this.countdown.begin();
   }
 }

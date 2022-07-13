@@ -3,6 +3,8 @@ import { AfterViewInit, Component, Input, OnInit, QueryList, ViewChild, ViewChil
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { first } from 'rxjs';
+import { Order } from 'src/app/models/order';
+import { OrderItem } from 'src/app/models/orderItem';
 import { PrimitiveResponse } from 'src/app/models/primitiveResponse';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
@@ -64,10 +66,13 @@ export class ProductsComponent implements OnInit {
   public price;
   public ingredients:string[] =[];
   public errTxt="";
+  public comment="";
+  public address="";
 
   constructor(private http: HttpClient,private productService:ProductService) { }
 
   ngOnInit(): void {
+    this.errTxt="";
     ELEMENT_DATA_ORDER_ITEMS.splice(0);
     this.LoadProducts();
 
@@ -83,7 +88,7 @@ export class ProductsComponent implements OnInit {
   
           error: (error)=>
           {
-            //
+            this.errTxt==error.errTxt;
           }
         }); 
 
@@ -100,7 +105,7 @@ export class ProductsComponent implements OnInit {
   
           error: (error)=>
           {
-            //
+            this.errTxt==error.errTxt;
           }
         }); 
   }
@@ -135,7 +140,7 @@ export class ProductsComponent implements OnInit {
 
         error: (error)=>
         {
-          //
+          this.errTxt==error.errTxt;
         }
       }); 
   }
@@ -161,7 +166,7 @@ export class ProductsComponent implements OnInit {
 
     for(let ingredient in ELEMENT_DATA_SELED_INGREDIENTS)
     {
-      if(ELEMENT_DATA_SELED_INGREDIENTS[ingredient]['name'] != this.selectedTableIngredient['name'])                       //Not target keep it
+      if(ELEMENT_DATA_SELED_INGREDIENTS[ingredient]['name'] != this.selectedTableIngredient['name'])                               //Not target keep it
       {
         updated.push(ELEMENT_DATA_SELED_INGREDIENTS[ingredient]);     
       }
@@ -280,7 +285,43 @@ export class ProductsComponent implements OnInit {
 
   tryOrderSubmit()
   {
+    if(this.address.length<8) 
+    {
+      this.errTxt='Address length min. 8 chars.';
+      return;
+    }
+    else
+      this.errTxt='';
 
+    let coverted = localStorage.getItem('token_converted');
+    if (coverted==null) coverted ="";
+
+    let orderItems:OrderItem[]=[];
+
+    for(let item in ELEMENT_DATA_ORDER_ITEMS)
+    {
+      orderItems.push(new OrderItem(ELEMENT_DATA_ORDER_ITEMS[item]['name'], ELEMENT_DATA_ORDER_ITEMS[item]['quantity'],ELEMENT_DATA_ORDER_ITEMS[item]['unitPrice']));
+    }
+
+    let order = new Order(orderItems, this.deliveryFee, this.address, this.comment, 'a', -1, JSON.parse(coverted)['username'], '', this.totalOrderPrice);
+    this.productService.submitOrder(this.http, order, JSON.parse(coverted)['username']).subscribe(
+      {
+        next: (data)=>
+        {
+            ELEMENT_DATA_ORDER_ITEMS.splice(0);
+            this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
+            this.tables.toArray()[1].renderRows();
+            this.selectedItem=undefined;
+            this.comment="";
+            this.address="";
+            this.errTxt="";
+        },
+
+        error: (error)=>
+        {
+          this.errTxt==error.errTxt;
+        }
+      }); 
   }
 
   tryAddToCart()
@@ -292,6 +333,8 @@ export class ProductsComponent implements OnInit {
     this.tables.toArray()[1].renderRows();
     this.totalOrderPrice= parseFloat(this.totalOrderPrice) + parseFloat(itemPrice.toString());
     this.unitsNum=1;
+
+    this.submitAvailable= (ELEMENT_DATA_ORDER_ITEMS.length>0);
   }
 
   tryRemoveFromCart()
@@ -301,29 +344,35 @@ export class ProductsComponent implements OnInit {
     let updated: OrderItemView[] =[];
 
     let triggered = false;
-    for(let ingredient in ELEMENT_DATA_ORDER_ITEMS)
+    for(let item in ELEMENT_DATA_ORDER_ITEMS)
     {
-      if(ELEMENT_DATA_ORDER_ITEMS[ingredient]['name'] == this.selectedItem['name'] && 
-           ELEMENT_DATA_ORDER_ITEMS[ingredient]['quantity'] == this.selectedItem['quantity'] &&
-           ELEMENT_DATA_ORDER_ITEMS[ingredient]['qunitPrice'] == this.selectedItem['unitPrice'] &&
-           ELEMENT_DATA_ORDER_ITEMS[ingredient]['totalItemPrice'] == this.selectedItem['totalItemPrice'] )                       
+     
+      if(ELEMENT_DATA_ORDER_ITEMS[item]['name'] == this.selectedItem['name'] && 
+              ELEMENT_DATA_ORDER_ITEMS[item]['quantity'] == this.selectedItem['quantity']  && 
+              triggered)                           //Remove only one instance of target
       {
-        if(triggered)
-          updated.push(ELEMENT_DATA_ORDER_ITEMS[ingredient]);  //First instance deleted keep
-        else
-        {
-          this.totalOrderPrice= parseFloat(this.totalOrderPrice) - (parseFloat(this.selectedItem['quantity'].toString()) * parseFloat(this.selectedItem['price']));
-          triggered = true;
-        }     
-      }
+        updated.push(ELEMENT_DATA_ORDER_ITEMS[item]);      
+      }      
+      else if( ELEMENT_DATA_ORDER_ITEMS[item]['name'] == this.selectedItem['name'] && 
+               ELEMENT_DATA_ORDER_ITEMS[item]['quantity'] == this.selectedItem['quantity']  && 
+               (!triggered))          //Remove first instance
+      {
+        this.totalOrderPrice= parseFloat(this.totalOrderPrice) - parseFloat(this.selectedItem['totalItemPrice'].toString());
+        triggered=true; 
+      } 
       else
       {
-        updated.push(ELEMENT_DATA_ORDER_ITEMS[ingredient]);  
+        updated.push(ELEMENT_DATA_ORDER_ITEMS[item]);
       }
-
-      this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
-      this.tables.toArray()[1].renderRows();
     }
-  }
 
+    ELEMENT_DATA_ORDER_ITEMS.splice(0);
+    for(let update in updated)
+      ELEMENT_DATA_ORDER_ITEMS.push(updated[update]);
+
+    this.dataSourceOrderItems = new MatTableDataSource<OrderItemView>(ELEMENT_DATA_ORDER_ITEMS);
+    this.tables.toArray()[1].renderRows();
+    this.selectedItem=this.dataSourceOrderItems.data[this.dataSourceOrderItems.data.length-1];
+    this.submitAvailable= (ELEMENT_DATA_ORDER_ITEMS.length>0);
+  }
 }
