@@ -25,5 +25,7 @@ namespace DeliveryService.Services.Interfaces
     public string GetRole(string username);
 
     public bool IsVerified(string username);
+
+    public int GetUserState(string username);
   }
 }

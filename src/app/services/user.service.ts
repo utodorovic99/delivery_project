@@ -20,6 +20,12 @@ export class UserService {
 
   public updateUser(updateReq:UserUpdateRequest, username:string, http:HttpClient):Observable<number | PrimitiveResponse>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
     let serviceUrl="update";
     let body = JSON.stringify(updateReq)
 
@@ -30,17 +36,48 @@ export class UserService {
 
   public getProfileData(username:string, http:HttpClient):Observable<number | User>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
     let serviceUrl="profile";
     return http.get<User>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`); 
   }
 
+  public getState(username:string, http:HttpClient):Observable<number | PrimitiveResponse>
+  {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
+    let serviceUrl="profile";
+    return http.get<PrimitiveResponse>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}/state`);  
+  }
+
   public getAllUsers(http:HttpClient):Observable<number | Array<User>>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
+    console.log(this.headers);
     return http.get<Array<User>>(  `${environment.apiUrl}/${this.controllerUrl}`,{headers:this.headers}); 
   }
 
   public userReject(username:string, http:HttpClient):Observable<number | PrimitiveResponse>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
     let serviceUrl="decline";
     return http.post<PrimitiveResponse>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`,
                                             "",
@@ -49,6 +86,12 @@ export class UserService {
 
   public userVerification(username:string, http:HttpClient):Observable<number | PrimitiveResponse>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
     let serviceUrl="pending";
     return http.post<PrimitiveResponse>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`,
                                             "",                                     
@@ -57,6 +100,12 @@ export class UserService {
 
   public userVerify(username:string, http:HttpClient):Observable<number | PrimitiveResponse>
   {
+    this.headers= new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    })
+
+
     let serviceUrl="accept";
     return http.post<PrimitiveResponse>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`,
                                            "",                        

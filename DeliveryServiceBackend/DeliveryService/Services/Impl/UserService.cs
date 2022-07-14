@@ -368,5 +368,9 @@ namespace DeliveryService.Services.Impl
       smtp.Disconnect(true);
     }
 
+    public int GetUserState(string username)
+    {     
+      return _dbContext.Users.Find(username).State;
+    }
   }
 }

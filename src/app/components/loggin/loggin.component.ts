@@ -7,6 +7,7 @@ import * as shajs from 'sha.js';
 import { UserRegisterRequest } from '../../models/userRegisterRequest';
 import { MatDialog } from '@angular/material/dialog';
 import { UserLoginRequest } from '../../models/userLoginRequest';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-loggin',
@@ -41,7 +42,7 @@ export class LogginComponent implements OnInit {
 
   public errTxt="";
 
-  constructor(private http: HttpClient, private registrationService: RegistrationService) { }
+  constructor(private http: HttpClient, private registrationService: RegistrationService, private userService:UserService) { }
   ngOnInit(): void 
   {
     this.setLoginEnvironment();
@@ -82,12 +83,34 @@ export class LogginComponent implements OnInit {
               localStorage.setItem('token_converted',  this.registrationService.getTokenJSON(localStorage.getItem('token')));
               let coverted = localStorage.getItem('token_converted');
               if (coverted==null) coverted ="";
-              switch(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
-              {
-                case "Administrator": { this.setAdminEnvironment();      break;}
-                case "Consumer":      { this.setConsumerEnvironment();   break;}
-                case "Deliveryman":   { this.setDeliverymanEnvironment();break;}
-              }
+              console.log(coverted );
+
+              this.userService.getState(JSON.parse(coverted)["username"], this.http).subscribe(
+                {
+                  next: (data)=>
+                  {
+                    if (coverted==null) coverted ="";
+                    switch(JSON.parse(coverted)["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+                    {
+                      case "Administrator": { this.setAdminEnvironment();      break;}
+                      case "Consumer":      { this.setConsumerEnvironment();   break;}
+                      case "Deliveryman":   
+                      { 
+                        if(data['value']== "1")
+                          this.setDeliverymanEnvironment();
+                        else
+                          this.setUnconfirmedDeliverymanEnvironment();
+                        
+                          break;
+                      }
+                    }
+                  },
+        
+                  error: (error)=>
+                  {
+                    this.errTxt="Errors: Login failed";
+                  }        
+                });             
             }
           },
 
@@ -184,6 +207,12 @@ export class LogginComponent implements OnInit {
   {
     this.SPVisualContext = 'Deliveryman';
     this.SPVisualContext_changedEvent.emit('Deliveryman');
+  }
+
+  setUnconfirmedDeliverymanEnvironment()
+  {
+    this.SPVisualContext = 'UnconfirmedDeliveryman';
+    this.SPVisualContext_changedEvent.emit('UnconfirmedDeliveryman');
   }
 
   setConsumerEnvironment()

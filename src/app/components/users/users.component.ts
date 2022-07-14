@@ -48,7 +48,7 @@ constructor(private http: HttpClient,private userService:UserService, private sa
           var urlPass;
           for(let user in data as unknown as UserView[])
           {     
-            if(data[user]['imageRaw']!=='AA==' && data[user]['imageRaw'].length>0)
+            if((data[user]['imageRaw']!=='AA==' || data[user]['imageRaw']!=='')  && data[user]['imageRaw'].length>0)
             {
               url = 'data:image/png;base64,' + data[user]['imageRaw'];
               urlPass= this.sanitizer.bypassSecurityTrustUrl(url);
@@ -65,6 +65,7 @@ constructor(private http: HttpClient,private userService:UserService, private sa
 
         error: (error)=>
         {
+          console.log(error);
           //
         }
       }); 

@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
   public birthdate   ="";
   public address     ="";
   public type        ="";
+  public state = "";
   public typeIdx = 1;
   public img_url='assets\\Images\\select_image.png';
   public errTxt="";
@@ -111,6 +112,7 @@ export class ProfileComponent implements OnInit {
           this.address     =(data as User)['address'];
           this.type        = this.mapTypeValueToStr((data as User)['type']);
           this.typeIdx     = this.mapTypeToIndex((data as User)['type']);
+          this.state       = this.mapStateCodeToStr((data as User)['state']);
 
           var url;
           var urlPass;
@@ -133,6 +135,18 @@ export class ProfileComponent implements OnInit {
         }
       }); 
     }
+  }
+
+  private mapStateCodeToStr(code:number):string
+  {
+    switch(code)
+    {
+      case 0: {return "unconfirmed";}
+      case 1: {return "confirmed";}
+      case 2: {return "rejected";}
+      case 3: {return "pending";}
+    }
+    return "-";
   }
 
   private mapTypeValueToStr(type:string)

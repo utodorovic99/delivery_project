@@ -6,7 +6,7 @@
             <img [src]="img_url" alt="profile image"
               class="rounded-circle img-fluid" style="width: 150px; background-color: #6a11cb;">
             <h5 class="my-3">{{name}} {{surname}}</h5>
-            <p class="text-muted mb-1">{{type}}</p>
+            <p class="text-muted mb-1">{{type}}<sub>({{state}})</sub></p>
             <p class="text-muted mb-4">{{address}}</p>
             <div class="d-flex justify-content-center mb-2">
               <button type="button" class="btn btn-primary" style="width: 80px;" (click)="editData()">Edit</button>

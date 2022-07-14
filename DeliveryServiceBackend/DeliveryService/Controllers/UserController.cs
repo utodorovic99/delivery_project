@@ -90,6 +90,14 @@ namespace DeliveryService.Controllers
       return Ok(_transistentUserService.GetByUsername(username));
     }
 
+    //Get profile state
+    [HttpGet]
+    [Route("api/[controller]/{username}/profile/state")]
+    public async Task<ActionResult<PrimitiveResponseDTO>> GetUserState([System.Web.Http.FromUri] string username)
+    {
+      return Ok( new PrimitiveResponseDTO(_transistentUserService.GetUserState(username).ToString(), "int"));
+    }
+
     //Accept registration
     [HttpPost]
     [Route("api/[controller]/{username}/accept")]
