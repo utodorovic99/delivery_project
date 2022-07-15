@@ -49,11 +49,12 @@ export class ProfileComponent implements OnInit {
 
   updateData()
   {
-    let updateReq = new UserUpdateRequest(this.email, this.name, this.surname, this.birthdate, this.address,this.password, this.new_password, "");
+    let updateReq = new UserUpdateRequest(this.email, this.password, this.username,this.name, this.surname, this.birthdate, this.address, this.type,this.new_password);
     let coverted = localStorage.getItem('token_converted');
     if (coverted==null) coverted =""; 
     if(coverted != null)
     {     
+      console.log(updateReq);
       this.userService.updateUser( updateReq,  JSON.parse(coverted)['username'], this.http).subscribe(
       {
         

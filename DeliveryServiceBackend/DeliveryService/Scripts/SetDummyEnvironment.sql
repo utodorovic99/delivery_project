@@ -151,7 +151,6 @@ INSERT INTO dbo.OrdersTmp VALUES (0, 'ugljesa_dummy5_consumer', '',						    'Du
 INSERT INTO dbo.OrdersTmp VALUES (2, 'ugljesa_dummy5_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address3',  'Dummy Comment 3', 'c', '10/07/2022 08:45');
 INSERT INTO dbo.OrdersTmp VALUES (3, 'ugljesa_dummy5_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address4',  'Dummy Comment 4', 'c', '09/07/2022 09:49');
 INSERT INTO dbo.OrdersTmp VALUES (4, 'ugljesa_dummy5_consumer', '',                         'Dummy Address5',  'Dummy Comment 5', 'a', '');
-INSERT INTO dbo.OrdersTmp VALUES (5, 'ugljesa_dummy6_consumer', '',                         'Dummy Address6',  'Dummy Comment 6', 'a', '');
 INSERT INTO dbo.OrdersTmp VALUES (7, 'ugljesa_dummy6_consumer', 'ugljesa_dummy3_delivery',  'Dummy Address8',  'Dummy Comment 8', 'c', '08/07/2022 11:22');
 INSERT INTO dbo.OrdersTmp VALUES (8, 'ugljesa_dummy6_consumer', 'ugljesa_dummy4_delivery',  'Dummy Address9',  'Dummy Comment 9', 'c', '07/07/2022 22:35');
 INSERT INTO dbo.OrdersTmp VALUES (9, 'ugljesa_dummy6_consumer', '',                         'Dummy Address10', 'Dummy Comment 10','a', '');

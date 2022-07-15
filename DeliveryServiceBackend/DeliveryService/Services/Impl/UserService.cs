@@ -155,13 +155,14 @@ namespace DeliveryService.Services.Impl
 
       errMsg = "";
       Dictionary<string, bool> stats = new Dictionary<string, bool>();
-      stats.Add("NewPassword", true); 
+      stats.Add("NewPassword", true);
+
       if (!(updateReq.NewPassword != "" && (errMsg= UserValidator.ValidatePassword(updateReq.NewPassword) + ";").Equals(";")))           
       {
         errMsg = "New " + errMsg.ToLower();
         stats["NewPassword"] = false;
       }
-     
+
       errMsg += ";" + UserValidator.ValidateUserBaseCriteria(updateReq, ref stats, new List<string>() {"Username", "Type"});
 
       if (_dbContext.Users.FirstOrDefault(x => x.Email.Equals(updateReq.Email) && !x.Username.Equals(target.Username)) != null)

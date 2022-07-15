@@ -14,22 +14,19 @@ export class UserService {
   headers= new HttpHeaders({
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${localStorage.getItem('token')}`
-  })
+  });
 
   constructor() { }
 
   public updateUser(updateReq:UserUpdateRequest, username:string, http:HttpClient):Observable<number | PrimitiveResponse>
   {
-    this.headers= new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
-
+    this.headers= new HttpHeaders()
+    .set('content-type', 'application/json');
 
     let serviceUrl="update";
     let body = JSON.stringify(updateReq)
 
-    return http.post<PrimitiveResponse>(  `${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`, 
+    return http.post<PrimitiveResponse>(`${environment.apiUrl}/${this.controllerUrl}/${username}/${serviceUrl}`, 
                         body, 
                         {'headers':this.headers});   
   }
@@ -39,7 +36,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     let serviceUrl="profile";
@@ -51,7 +48,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     let serviceUrl="profile";
@@ -63,7 +60,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     console.log(this.headers);
@@ -75,7 +72,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     let serviceUrl="decline";
@@ -89,7 +86,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     let serviceUrl="pending";
@@ -103,7 +100,7 @@ export class UserService {
     this.headers= new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
-    })
+    });
 
 
     let serviceUrl="accept";

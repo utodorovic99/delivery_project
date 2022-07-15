@@ -59,7 +59,7 @@ namespace DeliveryService.Controllers
     {
       string errStr = "";
       bool isPasswordValid = _transistentUserService.ValidatePassword(username, updateReq.Password);
-      if(!isPasswordValid) return BadRequest("Invalid password");
+      if (!isPasswordValid) return BadRequest("Invalid password");
 
       if (!_transistentUserService.TryUpdate(updateReq, username, out errStr))
         return BadRequest(errStr);
@@ -70,7 +70,8 @@ namespace DeliveryService.Controllers
       else
         passStatus = "F";
 
-      return Ok(new  PrimitiveResponseDTO(errStr+passStatus, "string"));
+      return Ok(new PrimitiveResponseDTO(errStr + passStatus, "string"));
+      return Ok();
     }
 
     //Read all users

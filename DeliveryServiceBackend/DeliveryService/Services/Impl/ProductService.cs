@@ -146,7 +146,7 @@ namespace DeliveryService.Services.Impl
             if (!deliveryman.Type.ToString().Equals("c"))
             { errMsg = "Invalid user type."; return orders; }
 
-            var target = _dbContext.Orders.ToList().Where(x => x.Status.Equals('t') &&
+            var target = _dbContext.Orders.ToList().Where(x => (x.Status.Equals('t') || x.Status.Equals('a')) &&
                                                                                    x.Consumer.Equals(username)).FirstOrDefault();
             if (target != null)
               orders = _mapper.Map<List<OrderDTO>>(new List<Order>() { target });
